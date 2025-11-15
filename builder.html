@@ -367,6 +367,22 @@
 
         .resume-header {
             margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .resume-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .resume-header-text {
+            flex: 1;
         }
 
         .resume-header h1 {
@@ -669,6 +685,15 @@
                 <div class="section-title">Personal Information</div>
 
                 <div class="form-group">
+                    <label for="photo">Profile Photo (Optional)</label>
+                    <input type="file" id="photoUpload" accept="image/*" onchange="handlePhotoUpload(event)" style="display: block;">
+                    <div id="photoPreviewContainer" style="margin-top: 12px; display: none;">
+                        <img id="photoPreviewForm" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 3px solid var(--primary-color);">
+                        <button type="button" class="btn btn-danger" style="margin-top: 8px; display: block;" onclick="removePhoto()">Remove Photo</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" placeholder="John Doe" oninput="updatePreview()">
                 </div>
@@ -731,7 +756,10 @@
                         <!-- Main Content -->
                         <div class="resume-main">
                             <div class="resume-header">
-                                <h1 id="preview-name">Your Name</h1>
+                                <img id="preview-photo" class="resume-photo" style="display: none;">
+                                <div class="resume-header-text">
+                                    <h1 id="preview-name">Your Name</h1>
+                                </div>
                             </div>
 
                             <div class="resume-summary" id="preview-summary-section" style="display: none;">
@@ -762,6 +790,7 @@
     <script>
         // Resume data structure
         let resumeData = {
+            photo: '',
             name: '',
             email: '',
             phone: '',
@@ -795,7 +824,38 @@
                 document.getElementById('email').value = resumeData.email || '';
                 document.getElementById('phone').value = resumeData.phone || '';
                 document.getElementById('summary').value = resumeData.summary || '';
+
+                // Restore photo if exists
+                if (resumeData.photo) {
+                    document.getElementById('photoPreviewForm').src = resumeData.photo;
+                    document.getElementById('photoPreviewContainer').style.display = 'block';
+                }
             }
+        }
+
+        // Photo handling functions
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resumeData.photo = e.target.result;
+
+                    // Show preview in form
+                    document.getElementById('photoPreviewForm').src = e.target.result;
+                    document.getElementById('photoPreviewContainer').style.display = 'block';
+
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePhoto() {
+            resumeData.photo = '';
+            document.getElementById('photoUpload').value = '';
+            document.getElementById('photoPreviewContainer').style.display = 'none';
+            updatePreview();
         }
 
         // Update preview
@@ -805,6 +865,15 @@
             resumeData.email = document.getElementById('email').value;
             resumeData.phone = document.getElementById('phone').value;
             resumeData.summary = document.getElementById('summary').value;
+
+            // Update photo
+            const photoPreview = document.getElementById('preview-photo');
+            if (resumeData.photo) {
+                photoPreview.src = resumeData.photo;
+                photoPreview.style.display = 'block';
+            } else {
+                photoPreview.style.display = 'none';
+            }
 
             // Update preview
             document.getElementById('preview-name').textContent = resumeData.name || 'Your Name';
@@ -1076,6 +1145,7 @@
                         // Validate structure
                         if (imported && typeof imported === 'object') {
                             resumeData = {
+                                photo: imported.photo || '',
                                 name: imported.name || '',
                                 email: imported.email || '',
                                 phone: imported.phone || '',
@@ -1090,6 +1160,14 @@
                             document.getElementById('email').value = resumeData.email;
                             document.getElementById('phone').value = resumeData.phone;
                             document.getElementById('summary').value = resumeData.summary;
+
+                            // Restore photo if exists
+                            if (resumeData.photo) {
+                                document.getElementById('photoPreviewForm').src = resumeData.photo;
+                                document.getElementById('photoPreviewContainer').style.display = 'block';
+                            } else {
+                                document.getElementById('photoPreviewContainer').style.display = 'none';
+                            }
 
                             renderExperience();
                             renderEducation();
