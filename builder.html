@@ -506,43 +506,36 @@
         .skills-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .skill-item {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .skill-name {
-            min-width: 100px;
             font-size: 0.8125rem;
             font-weight: 500;
             color: var(--text-dark);
         }
 
-        .skill-bar-container {
-            flex: 1;
-            height: 8px;
-            background: var(--bg-light);
-            border-radius: 4px;
-            overflow: hidden;
+        .skill-boxes {
+            display: flex;
+            gap: 4px;
         }
 
-        .skill-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
-            transition: width 0.3s ease;
+        .skill-box {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #667eea;
+            background: white;
+            border-radius: 2px;
         }
 
-        .skill-percentage {
-            min-width: 40px;
-            text-align: right;
-            font-size: 0.75rem;
-            color: var(--text-medium);
-            font-weight: 500;
+        .skill-box.filled {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .empty-state {
@@ -1230,7 +1223,7 @@
 
         // Skills functions
         function addSkill() {
-            resumeData.skills.push({name: '', level: 80});
+            resumeData.skills.push({name: '', level: 4});
             renderSkills();
         }
 
@@ -1246,7 +1239,14 @@
 
             resumeData.skills.forEach((skill, index) => {
                 const skillName = typeof skill === 'string' ? skill : skill.name;
-                const skillLevel = typeof skill === 'object' ? skill.level : 80;
+                let skillLevel = typeof skill === 'object' ? skill.level : 4;
+
+                // Convert old percentage to new 1-5 scale if needed
+                if (skillLevel > 5) {
+                    skillLevel = Math.round(skillLevel / 20);
+                }
+                if (skillLevel < 1) skillLevel = 1;
+                if (skillLevel > 5) skillLevel = 5;
 
                 const div = document.createElement('div');
                 div.className = 'dynamic-section';
@@ -1260,10 +1260,14 @@
                         <input type="text" value="${skillName}" onchange="updateSkillName(${index}, this.value)">
                     </div>
                     <div class="form-group">
-                        <label>Skill Level: <span id="skill-level-${index}">${skillLevel}%</span></label>
-                        <input type="range" min="0" max="100" value="${skillLevel}"
-                               oninput="updateSkillLevel(${index}, this.value)"
-                               style="width: 100%; accent-color: var(--primary-color);">
+                        <label>Proficiency Level (1-5)</label>
+                        <select onchange="updateSkillLevel(${index}, this.value)" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.875rem; font-family: inherit;">
+                            <option value="1" ${skillLevel == 1 ? 'selected' : ''}>1 - Beginner</option>
+                            <option value="2" ${skillLevel == 2 ? 'selected' : ''}>2 - Elementary</option>
+                            <option value="3" ${skillLevel == 3 ? 'selected' : ''}>3 - Intermediate</option>
+                            <option value="4" ${skillLevel == 4 ? 'selected' : ''}>4 - Advanced</option>
+                            <option value="5" ${skillLevel == 5 ? 'selected' : ''}>5 - Expert</option>
+                        </select>
                     </div>
                 `;
                 container.appendChild(div);
@@ -1272,7 +1276,7 @@
 
         function updateSkillName(index, value) {
             if (typeof resumeData.skills[index] === 'string') {
-                resumeData.skills[index] = {name: value, level: 80};
+                resumeData.skills[index] = {name: value, level: 4};
             } else {
                 resumeData.skills[index].name = value;
             }
@@ -1280,7 +1284,6 @@
         }
 
         function updateSkillLevel(index, value) {
-            document.getElementById(`skill-level-${index}`).textContent = value + '%';
             if (typeof resumeData.skills[index] === 'string') {
                 resumeData.skills[index] = {name: resumeData.skills[index], level: parseInt(value)};
             } else {
@@ -1302,16 +1305,26 @@
                 container.innerHTML = '';
                 filledSkills.forEach(skill => {
                     const skillName = typeof skill === 'string' ? skill : skill.name;
-                    const skillLevel = typeof skill === 'object' ? skill.level : 80;
+                    let skillLevel = typeof skill === 'object' ? skill.level : 4;
+
+                    // Convert old percentage to new 1-5 scale if needed
+                    if (skillLevel > 5) {
+                        skillLevel = Math.round(skillLevel / 20);
+                    }
+                    if (skillLevel < 1) skillLevel = 1;
+                    if (skillLevel > 5) skillLevel = 5;
+
+                    // Create 5 boxes
+                    let boxesHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        boxesHTML += `<div class="skill-box ${i <= skillLevel ? 'filled' : ''}"></div>`;
+                    }
 
                     const div = document.createElement('div');
                     div.className = 'skill-item';
                     div.innerHTML = `
                         <div class="skill-name">${skillName}</div>
-                        <div class="skill-bar-container">
-                            <div class="skill-bar" style="width: ${skillLevel}%"></div>
-                        </div>
-                        <div class="skill-percentage">${skillLevel}%</div>
+                        <div class="skill-boxes">${boxesHTML}</div>
                     `;
                     container.appendChild(div);
                 });
