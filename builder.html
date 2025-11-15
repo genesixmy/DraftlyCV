@@ -422,6 +422,22 @@
             flex-shrink: 0;
         }
 
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .contact-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: #667eea;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         .resume-summary {
             margin-bottom: 28px;
         }
@@ -739,6 +755,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="address">Address (Optional)</label>
+                    <input type="text" id="address" placeholder="City, Country" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label for="website">Website/Portfolio (Optional)</label>
+                    <input type="url" id="website" placeholder="https://yourwebsite.com" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
                     <label for="summary">Professional Summary</label>
                     <textarea id="summary" placeholder="Brief summary about yourself, your expertise, and career goals..." oninput="updatePreview()"></textarea>
                 </div>
@@ -757,6 +783,11 @@
                 <div class="section-title">Skills</div>
                 <div id="skillsList"></div>
                 <button class="btn btn-add" onclick="addSkill()">+ Add Skill</button>
+
+                <!-- Certificates Section -->
+                <div class="section-title">Certificates</div>
+                <div id="certificatesList"></div>
+                <button class="btn btn-add" onclick="addCertificate()">+ Add Certificate</button>
             </div>
 
             <!-- Preview Section -->
@@ -768,18 +799,51 @@
                             <div class="resume-contact">
                                 <div class="resume-section-title">Contact</div>
                                 <div class="resume-contact-item">
-                                    <span>📧</span>
+                                    <div class="contact-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                            <polyline points="22,6 12,13 2,6"></polyline>
+                                        </svg>
+                                    </div>
                                     <span id="preview-email">your.email@example.com</span>
                                 </div>
                                 <div class="resume-contact-item">
-                                    <span>📱</span>
+                                    <div class="contact-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                        </svg>
+                                    </div>
                                     <span id="preview-phone">+60 12-345 6789</span>
+                                </div>
+                                <div class="resume-contact-item" id="preview-address-item" style="display: none;">
+                                    <div class="contact-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                    </div>
+                                    <span id="preview-address"></span>
+                                </div>
+                                <div class="resume-contact-item" id="preview-website-item" style="display: none;">
+                                    <div class="contact-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                        </svg>
+                                    </div>
+                                    <span id="preview-website"></span>
                                 </div>
                             </div>
 
                             <div class="resume-section" id="preview-skills-section" style="display: none;">
                                 <div class="resume-section-title">Skills</div>
                                 <div class="skills-container" id="preview-skills"></div>
+                            </div>
+
+                            <div class="resume-section" id="preview-certificates-section" style="display: none;">
+                                <div class="resume-section-title">Certificates</div>
+                                <div id="preview-certificates"></div>
                             </div>
                         </div>
 
@@ -824,10 +888,13 @@
             name: '',
             email: '',
             phone: '',
+            address: '',
+            website: '',
             summary: '',
             experience: [],
             education: [],
-            skills: []
+            skills: [],
+            certificates: []
         };
 
         // Load from localStorage on page load
@@ -836,6 +903,7 @@
             renderExperience();
             renderEducation();
             renderSkills();
+            renderCertificates();
             updatePreview();
         });
 
@@ -853,6 +921,8 @@
                 document.getElementById('name').value = resumeData.name || '';
                 document.getElementById('email').value = resumeData.email || '';
                 document.getElementById('phone').value = resumeData.phone || '';
+                document.getElementById('address').value = resumeData.address || '';
+                document.getElementById('website').value = resumeData.website || '';
                 document.getElementById('summary').value = resumeData.summary || '';
 
                 // Restore photo if exists
@@ -894,6 +964,8 @@
             resumeData.name = document.getElementById('name').value;
             resumeData.email = document.getElementById('email').value;
             resumeData.phone = document.getElementById('phone').value;
+            resumeData.address = document.getElementById('address').value;
+            resumeData.website = document.getElementById('website').value;
             resumeData.summary = document.getElementById('summary').value;
 
             // Update photo
@@ -909,6 +981,24 @@
             document.getElementById('preview-name').textContent = resumeData.name || 'Your Name';
             document.getElementById('preview-email').textContent = resumeData.email || 'your.email@example.com';
             document.getElementById('preview-phone').textContent = resumeData.phone || '+60 12-345 6789';
+
+            // Address
+            const addressItem = document.getElementById('preview-address-item');
+            if (resumeData.address) {
+                document.getElementById('preview-address').textContent = resumeData.address;
+                addressItem.style.display = 'flex';
+            } else {
+                addressItem.style.display = 'none';
+            }
+
+            // Website
+            const websiteItem = document.getElementById('preview-website-item');
+            if (resumeData.website) {
+                document.getElementById('preview-website').textContent = resumeData.website;
+                websiteItem.style.display = 'flex';
+            } else {
+                websiteItem.style.display = 'none';
+            }
 
             // Summary section
             const summarySection = document.getElementById('preview-summary-section');
@@ -927,6 +1017,9 @@
 
             // Skills section
             updateSkillsPreview();
+
+            // Certificates section
+            updateCertificatesPreview();
 
             // Save to localStorage
             saveToLocalStorage();
@@ -1191,6 +1284,84 @@
             }
         }
 
+        // Certificates functions
+        function addCertificate() {
+            resumeData.certificates.push({
+                name: '',
+                issuer: '',
+                date: '',
+                description: ''
+            });
+            renderCertificates();
+            updatePreview();
+        }
+
+        function removeCertificate(index) {
+            resumeData.certificates.splice(index, 1);
+            renderCertificates();
+            updatePreview();
+        }
+
+        function renderCertificates() {
+            const container = document.getElementById('certificatesList');
+            container.innerHTML = '';
+
+            resumeData.certificates.forEach((cert, index) => {
+                const div = document.createElement('div');
+                div.className = 'dynamic-section';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <h4>Certificate ${index + 1}</h4>
+                        <button class="btn btn-danger" onclick="removeCertificate(${index})">Remove</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Certificate Name</label>
+                        <input type="text" value="${cert.name}" onchange="resumeData.certificates[${index}].name = this.value; updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Issuer/Organization</label>
+                        <input type="text" value="${cert.issuer}" onchange="resumeData.certificates[${index}].issuer = this.value; updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="text" placeholder="2024" value="${cert.date}" onchange="resumeData.certificates[${index}].date = this.value; updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Optional)</label>
+                        <textarea onchange="resumeData.certificates[${index}].description = this.value; updatePreview()">${cert.description}</textarea>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateCertificatesPreview() {
+            const previewSection = document.getElementById('preview-certificates-section');
+            const container = document.getElementById('preview-certificates');
+
+            if (resumeData.certificates.length > 0 && resumeData.certificates.some(cert => cert.name || cert.issuer)) {
+                container.innerHTML = '';
+                resumeData.certificates.forEach(cert => {
+                    if (cert.name || cert.issuer) {
+                        const div = document.createElement('div');
+                        div.className = 'resume-item';
+                        div.innerHTML = `
+                            <div class="resume-item-header">
+                                <div class="resume-item-title">${cert.name || 'Certificate Name'}</div>
+                                <div class="resume-item-company">${cert.issuer || 'Issuer'}</div>
+                                <div class="resume-item-date">${cert.date || 'Date'}</div>
+                            </div>
+                            ${cert.description ? `<div class="resume-item-description">${cert.description}</div>` : ''}
+                        `;
+                        container.appendChild(div);
+                    }
+                });
+                previewSection.style.display = 'block';
+            } else {
+                previewSection.style.display = 'none';
+            }
+        }
+
         // Export to JSON
         function exportResume() {
             const dataStr = JSON.stringify(resumeData, null, 2);
@@ -1219,16 +1390,21 @@
                                 name: imported.name || '',
                                 email: imported.email || '',
                                 phone: imported.phone || '',
+                                address: imported.address || '',
+                                website: imported.website || '',
                                 summary: imported.summary || '',
                                 experience: Array.isArray(imported.experience) ? imported.experience : [],
                                 education: Array.isArray(imported.education) ? imported.education : [],
-                                skills: Array.isArray(imported.skills) ? imported.skills : []
+                                skills: Array.isArray(imported.skills) ? imported.skills : [],
+                                certificates: Array.isArray(imported.certificates) ? imported.certificates : []
                             };
 
                             // Update form
                             document.getElementById('name').value = resumeData.name;
                             document.getElementById('email').value = resumeData.email;
                             document.getElementById('phone').value = resumeData.phone;
+                            document.getElementById('address').value = resumeData.address;
+                            document.getElementById('website').value = resumeData.website;
                             document.getElementById('summary').value = resumeData.summary;
 
                             // Restore photo if exists
@@ -1242,6 +1418,7 @@
                             renderExperience();
                             renderEducation();
                             renderSkills();
+                            renderCertificates();
                             updatePreview();
 
                             alert('Resume berhasil dimuat!');
