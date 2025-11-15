@@ -1794,12 +1794,7 @@
             document.querySelectorAll('.theme-color').forEach(el => el.classList.remove('active'));
             document.querySelector(`.theme-${themeName}`).classList.add('active');
 
-            // Update SVG icon colors
-            document.querySelectorAll('.contact-icon svg').forEach(svg => {
-                svg.style.stroke = color1;
-            });
-
-            // Update skill boxes
+            // Update theme elements
             const style = document.createElement('style');
             style.id = 'dynamic-theme-style';
             const oldStyle = document.getElementById('dynamic-theme-style');
