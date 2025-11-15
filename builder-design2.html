@@ -923,6 +923,8 @@
             if (saved) {
                 try {
                     const loadedData = JSON.parse(saved);
+
+                    // Merge with default structure to ensure all fields exist
                     resumeData = {
                         photo: loadedData.photo || '',
                         name: loadedData.name || '',
@@ -937,8 +939,8 @@
                         skills: Array.isArray(loadedData.skills) ? loadedData.skills : [],
                         certificates: Array.isArray(loadedData.certificates) ? loadedData.certificates : []
                     };
-                    
-                    // Populate form
+
+                    // Populate form fields
                     document.getElementById('name').value = resumeData.name || '';
                     document.getElementById('title').value = resumeData.title || '';
                     document.getElementById('email').value = resumeData.email || '';
@@ -946,13 +948,15 @@
                     document.getElementById('address').value = resumeData.address || '';
                     document.getElementById('website').value = resumeData.website || '';
                     document.getElementById('summary').value = resumeData.summary || '';
-                    
+
+                    // Restore photo if exists
                     if (resumeData.photo) {
                         document.getElementById('photoPreviewForm').src = resumeData.photo;
                         document.getElementById('photoPreviewContainer').style.display = 'block';
                     }
                 } catch (error) {
-                    console.error('Error loading data:', error);
+                    console.error('Error parsing localStorage data:', error);
+                    // Clear corrupted data
                     localStorage.removeItem('draftlycv_resume_design2');
                 }
             }
@@ -1660,13 +1664,6 @@
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', () => {
             try {
-                // Load saved theme
-                const savedTheme = localStorage.getItem('draftlycv_theme_design2');
-                if (savedTheme) {
-                    const theme = JSON.parse(savedTheme);
-                    changeTheme(theme.name, theme.color1, theme.color2);
-                }
-
                 loadFromLocalStorage();
                 renderExperience();
                 renderEducation();
@@ -1675,12 +1672,28 @@
                 updatePreview();
             } catch (error) {
                 console.error('Error loading data:', error);
+                // Clear potentially corrupted localStorage
                 localStorage.removeItem('draftlycv_resume_design2');
+                // Reinitialize with default data
                 renderExperience();
                 renderEducation();
                 renderSkills();
                 renderCertificates();
                 updatePreview();
+            }
+        });
+
+        // Load theme separately to avoid affecting resume data
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('draftlycv_theme_design2');
+            if (savedTheme) {
+                try {
+                    const theme = JSON.parse(savedTheme);
+                    changeTheme(theme.name, theme.color1, theme.color2);
+                } catch (error) {
+                    console.error('Error loading theme:', error);
+                    // Don't delete resume data, just use default theme
+                }
             }
         });
     </script>
