@@ -106,8 +106,18 @@
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 1.25rem;
+            width: 20px;
+            height: 20px;
+        }
+
+        .search-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-light);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
         }
 
         /* Main Container */
@@ -154,15 +164,35 @@
         }
 
         .category-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            border-radius: 12px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 16px;
-            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .category-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: #667eea;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            transform: scale(1.05);
+        }
+
+        .category-card:hover .category-icon svg {
+            stroke: #764ba2;
         }
 
         .category-card h3 {
@@ -410,10 +440,15 @@
     <!-- Header with Search -->
     <div class="kb-header">
         <div class="kb-header-content">
-            <h1>📚 DraftlyCV Knowledge Base</h1>
+            <h1>DraftlyCV Knowledge Base</h1>
             <p>Everything you need to know to create stunning resumes</p>
             <div class="search-container">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </span>
                 <input type="text" class="search-box" id="searchInput" placeholder="Search for help articles..." oninput="searchArticles()">
             </div>
         </div>
@@ -430,42 +465,82 @@
             <h2 class="section-title">Browse by Category</h2>
             <div class="categories-grid">
                 <div class="category-card" onclick="scrollToSection('getting-started')">
-                    <div class="category-icon">🚀</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
                     <h3>Getting Started</h3>
                     <p>Learn the basics of using DraftlyCV and create your first resume</p>
                     <span class="article-count">3 articles</span>
                 </div>
 
                 <div class="category-card" onclick="scrollToSection('building-resume')">
-                    <div class="category-icon">✏️</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </div>
                     <h3>Building Your Resume</h3>
                     <p>Add and manage your personal info, experience, education, and more</p>
                     <span class="article-count">6 articles</span>
                 </div>
 
                 <div class="category-card" onclick="scrollToSection('customization')">
-                    <div class="category-icon">🎨</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="13.5" cy="6.5" r=".5"></circle>
+                            <circle cx="17.5" cy="10.5" r=".5"></circle>
+                            <circle cx="8.5" cy="7.5" r=".5"></circle>
+                            <circle cx="6.5" cy="12.5" r=".5"></circle>
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                        </svg>
+                    </div>
                     <h3>Customization</h3>
                     <p>Personalize your resume with themes, colors, and design options</p>
                     <span class="article-count">2 articles</span>
                 </div>
 
                 <div class="category-card" onclick="scrollToSection('export-import')">
-                    <div class="category-icon">💾</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
                     <h3>Export & Save</h3>
                     <p>Download PDFs, export drafts, and manage your resume data</p>
                     <span class="article-count">3 articles</span>
                 </div>
 
                 <div class="category-card" onclick="scrollToSection('mobile')">
-                    <div class="category-icon">📱</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
+                    </div>
                     <h3>Mobile Usage</h3>
                     <p>Tips for using DraftlyCV on smartphones and tablets</p>
                     <span class="article-count">2 articles</span>
                 </div>
 
                 <div class="category-card" onclick="scrollToSection('tips')">
-                    <div class="category-icon">💡</div>
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </div>
                     <h3>Tips & Best Practices</h3>
                     <p>Professional advice to make your resume stand out</p>
                     <span class="article-count">4 articles</span>
