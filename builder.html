@@ -410,7 +410,7 @@
             display: grid;
             grid-template-columns: 200px 1fr;
             gap: 0;
-            min-height: 1122px; /* A4 height in pixels at 96dpi (297mm) */
+            min-height: 2244px; /* 2 x A4 height to ensure sidebar extends to 2nd page */
         }
 
         .resume-sidebar {
@@ -420,6 +420,7 @@
             overflow-wrap: break-word;
             word-wrap: break-word;
             max-width: 200px;
+            min-height: 2244px; /* Ensure sidebar extends to at least 2 pages */
         }
 
         .resume-main {
@@ -486,6 +487,9 @@
             width: 16px;
             height: 16px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .contact-icon svg {
@@ -496,6 +500,15 @@
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
+            display: block;
+        }
+
+        /* Ensure icons print correctly */
+        @media print {
+            .contact-icon svg {
+                stroke: #667eea !important;
+                fill: none !important;
+            }
         }
 
         .resume-summary {
@@ -1515,7 +1528,11 @@
                     scale: 2,
                     useCORS: true,
                     letterRendering: true,
-                    logging: false
+                    logging: false,
+                    scrollY: 0,
+                    scrollX: 0,
+                    allowTaint: true,
+                    foreignObjectRendering: true
                 },
                 jsPDF: {
                     unit: 'mm',
