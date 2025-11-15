@@ -494,34 +494,67 @@
             }
 
             .contact-icon {
-                width: auto;
-                font-size: 0.75rem;
-                color: #667eea;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #667eea;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                flex-shrink: 0;
             }
 
-            .contact-icon::before {
-                content: '●';
-                font-weight: bold;
+            .resume-contact-item:nth-child(2) .contact-icon::after {
+                content: 'E';
+            }
+
+            .resume-contact-item:nth-child(3) .contact-icon::after {
+                content: 'P';
+            }
+
+            #preview-address-item .contact-icon::after {
+                content: 'A';
+            }
+
+            #preview-website-item .contact-icon::after {
+                content: 'W';
             }
 
             .resume-content {
                 display: table;
                 width: 100%;
                 table-layout: fixed;
-                min-height: 297mm; /* A4 height */
             }
 
             .resume-sidebar {
                 display: table-cell;
                 width: 200px;
                 vertical-align: top;
-                background: var(--sidebar-bg);
-                min-height: 297mm;
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
 
             .resume-main {
                 display: table-cell;
                 vertical-align: top;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .skill-box {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .skill-box.filled {
+                background: #667eea !important;
             }
         }
 
@@ -1599,6 +1632,12 @@
         // Download PDF
         function downloadPDF() {
             const element = document.getElementById('resumePreview');
+
+            // Temporarily set min-height for sidebar to ensure it extends
+            const sidebar = element.querySelector('.resume-sidebar');
+            const originalMinHeight = sidebar.style.minHeight;
+            sidebar.style.minHeight = '1000px';
+
             const opt = {
                 margin: 10,
                 filename: `resume_${resumeData.name.replace(/\s+/g, '_') || 'draft'}.pdf`,
@@ -1606,7 +1645,8 @@
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    logging: false
+                    logging: false,
+                    backgroundColor: '#ffffff'
                 },
                 jsPDF: {
                     unit: 'mm',
@@ -1615,7 +1655,10 @@
                 }
             };
 
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).save().then(function() {
+                // Restore original min-height
+                sidebar.style.minHeight = originalMinHeight;
+            });
         }
 
         // Toggle mobile preview
