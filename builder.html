@@ -336,6 +336,7 @@
             background-clip: padding-box, border-box;
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         .btn-outline-gradient::before {
@@ -349,6 +350,7 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             z-index: -1;
+            border-radius: 8px;
         }
 
         .btn-outline-gradient:hover {
@@ -508,6 +510,23 @@
                 stroke: #667eea !important;
                 fill: none !important;
             }
+
+            .resume-content {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .resume-sidebar {
+                display: table-cell;
+                width: 200px;
+                vertical-align: top;
+            }
+
+            .resume-main {
+                display: table-cell;
+                vertical-align: top;
+            }
         }
 
         .resume-summary {
@@ -523,7 +542,6 @@
 
         .resume-section {
             margin-bottom: 28px;
-            page-break-inside: avoid;
         }
 
         .resume-section-title {
@@ -540,7 +558,6 @@
         .resume-item {
             margin-bottom: 20px;
             padding-left: 0;
-            page-break-inside: avoid;
         }
 
         .resume-item-header {
@@ -650,18 +667,30 @@
                 border-top: 1px solid var(--border-color);
             }
 
+            .resume-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             .resume-header h1 {
                 font-size: 1.5rem;
             }
 
+            .resume-photo {
+                margin-bottom: 16px;
+            }
+
             .resume-content {
                 grid-template-columns: 1fr;
+                display: block;
             }
 
             .resume-sidebar {
                 border-right: none;
                 border-bottom: 1px solid var(--border-color);
                 padding: 24px;
+                max-width: 100%;
+                width: 100%;
             }
 
             .resume-main {
