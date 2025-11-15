@@ -1582,21 +1582,35 @@
             sidebar.style.height = minHeight + 'px';
             sidebar.style.background = '#f8f9fa';
 
-            // Keep SVG icons but force inline styles for PDF rendering
+            // Replace SVG icons with simple text elements for PDF
             const contactIcons = element.querySelectorAll('.contact-icon');
-            const originalIconStyles = [];
+            const originalIconHTML = [];
+
+            // Icon mapping based on position
+            const iconReplacements = ['📧', '📱', '📍', '🌐']; // Email, Phone, Address, Website
 
             contactIcons.forEach((icon, index) => {
-                originalIconStyles[index] = icon.style.cssText;
+                originalIconHTML[index] = icon.innerHTML;
 
-                // Apply inline styles to icon container
-                icon.style.cssText = 'width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;';
+                // Create simple text span
+                const iconSpan = document.createElement('span');
+                iconSpan.style.cssText = 'font-size: 14px; display: inline-block;';
 
-                // Apply inline styles to SVG
-                const svg = icon.querySelector('svg');
-                if (svg) {
-                    svg.style.cssText = 'width: 100%; height: 100%; stroke: #667eea; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: block;';
+                // Determine which icon based on parent
+                let iconText = '●';
+                if (icon.closest('#preview-address-item')) {
+                    iconText = '📍';
+                } else if (icon.closest('#preview-website-item')) {
+                    iconText = '🌐';
+                } else if (index === 0) {
+                    iconText = '📧';
+                } else if (index === 1) {
+                    iconText = '📱';
                 }
+
+                iconSpan.textContent = iconText;
+                icon.innerHTML = '';
+                icon.appendChild(iconSpan);
             });
 
             // Ensure skill boxes keep colors
@@ -1627,13 +1641,9 @@
                 sidebar.style.height = originalSidebarHeight;
                 sidebar.style.background = originalSidebarBg;
 
-                // Restore original icon styles
+                // Restore original SVG icons
                 contactIcons.forEach((icon, index) => {
-                    icon.style.cssText = originalIconStyles[index];
-                    const svg = icon.querySelector('svg');
-                    if (svg) {
-                        svg.style.cssText = '';
-                    }
+                    icon.innerHTML = originalIconHTML[index];
                 });
 
                 // Restore skill boxes
