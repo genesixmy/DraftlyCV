@@ -330,37 +330,18 @@
         .btn-outline-gradient {
             background: white;
             color: #667eea;
-            border: 2px solid transparent;
-            background-image: linear-gradient(white, white), linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .btn-outline-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-            border-radius: 8px;
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+            transition: all 0.3s ease;
         }
 
         .btn-outline-gradient:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border-image: none;
+            border-color: transparent;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-outline-gradient:hover::before {
-            opacity: 1;
         }
 
         .btn-clear {
@@ -506,9 +487,15 @@
 
         /* Ensure icons print correctly */
         @media print {
-            .contact-icon svg {
-                stroke: #667eea !important;
-                fill: none !important;
+            .contact-icon {
+                display: none;
+            }
+
+            .resume-contact-item::before {
+                content: '•';
+                color: #667eea;
+                font-weight: bold;
+                margin-right: 8px;
             }
 
             .resume-content {
@@ -640,6 +627,10 @@
             display: none;
         }
 
+        .mobile-preview-btn {
+            display: none;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 968px) {
             .nav-links {
@@ -663,8 +654,11 @@
             }
 
             .preview-section {
-                border-left: none;
-                border-top: 1px solid var(--border-color);
+                display: none;
+            }
+
+            .mobile-preview-btn {
+                display: block !important;
             }
 
             .resume-header {
@@ -785,6 +779,8 @@
                     <button class="btn btn-outline-gradient" onclick="downloadPDF()">Download PDF</button>
                     <button class="btn btn-clear" onclick="clearAllData()">Clear All Data</button>
                 </div>
+
+                <button class="btn btn-primary mobile-preview-btn" onclick="downloadPDF()" style="width: 100%; margin-bottom: 24px;">Preview Resume (PDF)</button>
 
                 <!-- Personal Information -->
                 <div class="section-title">Personal Information</div>
