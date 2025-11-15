@@ -631,6 +631,36 @@
             background: #d33b2e;
         }
 
+        /* Navigation Links */
+        .nav-links-container {
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            color: var(--text-dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
         .theme-selector {
             margin-bottom: 24px;
         }
@@ -845,9 +875,9 @@
         <div class="main-content">
             <!-- Form Section -->
             <div class="form-section">
-                <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-                    <a href="theme-selector.html" style="color: var(--primary-color); text-decoration: none; font-size: 0.875rem; font-weight: 500;">← Back to Theme Selector</a>
-                    <a href="knowledge-base.html" style="color: var(--text-medium); text-decoration: none; font-size: 0.875rem; font-weight: 500;">📚 Help Center</a>
+                <div class="nav-links-container">
+                    <a href="theme-selector.html" class="nav-link">← Back to Theme Selector</a>
+                    <a href="knowledge-base.html" class="nav-link">Help Center</a>
                 </div>
 
                 <div class="button-group">

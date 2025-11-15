@@ -95,29 +95,40 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: var(--text-medium);
+            padding: 12px 24px;
+            background: white;
+            color: var(--text-dark);
             text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
             font-size: 0.9375rem;
-            transition: color 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         .back-link:hover {
-            color: var(--text-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .help-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: var(--primary-color);
+            padding: 12px 24px;
+            background: white;
+            color: var(--text-dark);
             text-decoration: none;
-            font-size: 0.9375rem;
+            border-radius: 8px;
             font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 0.9375rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         .help-link:hover {
-            color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .designs-grid {
@@ -431,7 +442,7 @@
                 ← Back to Home
             </a>
             <a href="knowledge-base.html" class="help-link">
-                📚 Help Center
+                Help Center
             </a>
         </div>
 
