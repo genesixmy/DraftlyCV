@@ -309,6 +309,8 @@
             color: white;
             padding: 6px 12px;
             font-size: 0.8125rem;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-danger:hover {
@@ -502,12 +504,15 @@
                 display: table;
                 width: 100%;
                 table-layout: fixed;
+                min-height: 297mm; /* A4 height */
             }
 
             .resume-sidebar {
                 display: table-cell;
                 width: 200px;
                 vertical-align: top;
+                background: var(--sidebar-bg);
+                min-height: 297mm;
             }
 
             .resume-main {
@@ -576,6 +581,7 @@
             margin-top: 8px;
             line-height: 1.6;
             font-size: 0.8125rem;
+            white-space: pre-wrap;
         }
 
         .skills-container {
@@ -780,7 +786,7 @@
                     <button class="btn btn-clear" onclick="clearAllData()">Clear All Data</button>
                 </div>
 
-                <button class="btn btn-primary mobile-preview-btn" onclick="downloadPDF()" style="width: 100%; margin-bottom: 24px;">Preview Resume (PDF)</button>
+                <button class="btn btn-primary mobile-preview-btn" onclick="previewPDF()" style="width: 100%; margin-bottom: 24px;">Preview Resume</button>
 
                 <!-- Personal Information -->
                 <div class="section-title">Personal Information</div>
@@ -1561,6 +1567,31 @@
             };
 
             html2pdf().set(opt).from(element).save();
+        }
+
+        // Preview PDF (for mobile - opens in new window instead of download)
+        function previewPDF() {
+            const element = document.getElementById('resumePreview');
+            const opt = {
+                margin: 10,
+                filename: `resume_${resumeData.name.replace(/\s+/g, '_') || 'draft'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+
+            // Generate PDF and open in new window
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
+                window.open(pdf.output('bloburl'), '_blank');
+            });
         }
 
         // Clear all data and reset
