@@ -631,6 +631,59 @@
             background: #d33b2e;
         }
 
+        .theme-selector {
+            margin-bottom: 24px;
+        }
+
+        .theme-selector-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .theme-colors {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .theme-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-color:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-color.active {
+            border-color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-color.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .theme-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .theme-green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .theme-orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .theme-red { background: linear-gradient(135deg, #f83600 0%, #f9d423 100%); }
+
         /* Mobile Responsive */
         @media (max-width: 968px) {
             .nav-links {
@@ -806,6 +859,18 @@
 
                 <button class="btn btn-primary mobile-preview-btn" onclick="toggleMobilePreview()" style="width: 100%; margin-bottom: 24px;">View Preview</button>
 
+                <!-- Theme Color Selector -->
+                <div class="theme-selector">
+                    <div class="theme-selector-title">Choose Theme Color</div>
+                    <div class="theme-colors">
+                        <div class="theme-color theme-purple active" onclick="changeTheme('purple', '#667eea', '#764ba2')" title="Purple"></div>
+                        <div class="theme-color theme-blue" onclick="changeTheme('blue', '#4facfe', '#00f2fe')" title="Blue"></div>
+                        <div class="theme-color theme-green" onclick="changeTheme('green', '#43e97b', '#38f9d7')" title="Green"></div>
+                        <div class="theme-color theme-orange" onclick="changeTheme('orange', '#fa709a', '#fee140')" title="Orange"></div>
+                        <div class="theme-color theme-red" onclick="changeTheme('red', '#f83600', '#f9d423')" title="Red"></div>
+                    </div>
+                </div>
+
                 <!-- Personal Information -->
                 <div class="section-title">Personal Information</div>
 
@@ -975,6 +1040,13 @@
             education: [],
             skills: [],
             certificates: []
+        };
+
+        // Theme colors
+        let currentTheme = {
+            name: 'purple',
+            color1: '#667eea',
+            color2: '#764ba2'
         };
 
         // Load from localStorage on page load
@@ -1613,10 +1685,10 @@
                 icon.appendChild(iconSpan);
             });
 
-            // Ensure skill boxes keep colors
+            // Ensure skill boxes keep current theme colors
             const skillBoxes = element.querySelectorAll('.skill-box.filled');
             skillBoxes.forEach(box => {
-                box.style.background = '#667eea';
+                box.style.background = `linear-gradient(135deg, ${currentTheme.color1} 0%, ${currentTheme.color2} 100%)`;
             });
 
             const opt = {
@@ -1705,6 +1777,78 @@
                 alert('All data has been cleared!');
             }
         }
+
+        // Change theme color
+        function changeTheme(themeName, color1, color2) {
+            // Update current theme
+            currentTheme = {
+                name: themeName,
+                color1: color1,
+                color2: color2
+            };
+
+            // Save to localStorage
+            localStorage.setItem('draftlycv_theme', JSON.stringify(currentTheme));
+
+            // Update active state
+            document.querySelectorAll('.theme-color').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.theme-${themeName}`).classList.add('active');
+
+            // Update SVG icon colors
+            document.querySelectorAll('.contact-icon svg').forEach(svg => {
+                svg.style.stroke = color1;
+            });
+
+            // Update skill boxes
+            const style = document.createElement('style');
+            style.id = 'dynamic-theme-style';
+            const oldStyle = document.getElementById('dynamic-theme-style');
+            if (oldStyle) oldStyle.remove();
+
+            style.innerHTML = `
+                .skill-box.filled {
+                    background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%) !important;
+                }
+                .resume-section-title {
+                    border-bottom-color: ${color1} !important;
+                }
+                .btn-outline-gradient {
+                    color: ${color1} !important;
+                    border-image: linear-gradient(135deg, ${color1} 0%, ${color2} 100%) 1 !important;
+                }
+                .btn-outline-gradient:hover {
+                    background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%) !important;
+                }
+                .btn-add {
+                    background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%) !important;
+                }
+                .btn-primary {
+                    background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%) !important;
+                }
+                .resume-photo {
+                    border-color: ${color1} !important;
+                }
+                #photoPreviewForm {
+                    border-color: ${color1} !important;
+                }
+                .skill-box {
+                    border-color: ${color1} !important;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Update preview immediately
+            updatePreview();
+        }
+
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('draftlycv_theme');
+            if (savedTheme) {
+                const theme = JSON.parse(savedTheme);
+                changeTheme(theme.name, theme.color1, theme.color2);
+            }
+        });
     </script>
 </body>
 </html>
