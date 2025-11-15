@@ -61,25 +61,6 @@
             border-radius: 50%;
         }
 
-        .back-link {
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 2;
-            font-size: 0.9375rem;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-        }
-
-        .back-link:hover {
-            opacity: 1;
-        }
-
         .header-content {
             position: relative;
             z-index: 1;
@@ -225,32 +206,36 @@
             color: white;
             width: 100%;
             margin-top: 16px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .btn-add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-danger {
-            background: #fc8181;
+            background: #ea4335;
             color: white;
-            font-size: 0.875rem;
-            padding: 8px 16px;
+            padding: 6px 12px;
+            font-size: 0.8125rem;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-danger:hover {
-            background: #f56565;
+            background: #d33b2e;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-outline-gradient {
@@ -659,7 +644,6 @@
 </head>
 <body>
     <div class="header">
-        <a href="theme-selector.html" class="back-link">← Back to Theme Selector</a>
         <div class="header-content">
             <h1>Resume Builder - Modern Timeline</h1>
             <p>Contemporary design perfect for creative professionals</p>
@@ -668,6 +652,10 @@
 
     <div class="container">
         <div class="form-column">
+            <div style="margin-bottom: 16px;">
+                <a href="theme-selector.html" style="color: #667eea; text-decoration: none; font-size: 0.875rem; font-weight: 500;">← Back to Theme Selector</a>
+            </div>
+
             <!-- Theme Selector -->
             <div class="theme-selector">
                 <div class="theme-selector-title">Choose Theme Color</div>
@@ -1412,75 +1400,77 @@
         // PDF Export
         function downloadPDF() {
             const element = document.getElementById('resumePreview');
-            
-            // Apply theme colors to skill boxes before PDF generation
-            const skillBoxes = element.querySelectorAll('.skill-box.filled');
+
+            // Clone the element to avoid modifying the original
+            const clone = element.cloneNode(true);
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.width = '210mm'; // A4 width
+            clone.style.background = 'white';
+            document.body.appendChild(clone);
+
+            // Apply theme colors with solid colors instead of gradients for better PDF rendering
+            const headerGradient = clone.querySelector('.resume-header-gradient');
+            if (headerGradient) {
+                headerGradient.style.background = currentTheme.color1;
+                headerGradient.style.backgroundImage = 'none';
+            }
+
+            const skillBoxes = clone.querySelectorAll('.skill-box.filled');
             skillBoxes.forEach(box => {
-                box.style.background = `linear-gradient(135deg, ${currentTheme.color1} 0%, ${currentTheme.color2} 100%)`;
+                box.style.background = currentTheme.color1;
+                box.style.backgroundImage = 'none';
             });
 
-            // Apply theme color to gradient header
-            const headerGradient = element.querySelector('.resume-header-gradient');
-            const originalHeaderBg = headerGradient.style.background;
-            headerGradient.style.background = `linear-gradient(135deg, ${currentTheme.color1} 0%, ${currentTheme.color2} 100%)`;
-
-            // Apply theme color to all elements
-            const sectionTitles = element.querySelectorAll('.resume-section-title');
+            const sectionTitles = clone.querySelectorAll('.resume-section-title');
             sectionTitles.forEach(title => {
                 title.style.borderBottomColor = currentTheme.color1;
             });
 
-            const timelineDots = element.querySelectorAll('.timeline-dot');
-            const timelineLines = element.querySelectorAll('.timeline-line');
+            const timelineDots = clone.querySelectorAll('.timeline-dot');
             timelineDots.forEach(dot => {
                 dot.style.background = currentTheme.color1;
                 dot.style.boxShadow = `0 0 0 2px ${currentTheme.color1}`;
             });
+
+            const timelineLines = clone.querySelectorAll('.timeline-line');
             timelineLines.forEach(line => {
-                line.style.background = `linear-gradient(to bottom, ${currentTheme.color1}, ${currentTheme.color2})`;
+                line.style.background = currentTheme.color1;
+                line.style.backgroundImage = 'none';
             });
 
-            const timelineCompanies = element.querySelectorAll('.timeline-company');
+            const timelineCompanies = clone.querySelectorAll('.timeline-company');
             timelineCompanies.forEach(comp => {
                 comp.style.color = currentTheme.color1;
             });
 
             const opt = {
-                margin: 10,
+                margin: [10, 10, 10, 10],
                 filename: `resume_${resumeData.name.replace(/\s+/g, '_') || 'draft'}_modern.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#ffffff',
+                    windowWidth: 794, // A4 width in pixels at 96 DPI
+                    windowHeight: 1123 // A4 height in pixels at 96 DPI
                 },
                 jsPDF: {
                     unit: 'mm',
                     format: 'a4',
                     orientation: 'portrait'
-                }
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            
-            html2pdf().set(opt).from(element).save().then(function() {
-                // Reset styles
-                skillBoxes.forEach(box => {
-                    box.style.background = '';
-                });
-                headerGradient.style.background = originalHeaderBg;
-                sectionTitles.forEach(title => {
-                    title.style.borderBottomColor = '';
-                });
-                timelineDots.forEach(dot => {
-                    dot.style.background = '';
-                    dot.style.boxShadow = '';
-                });
-                timelineLines.forEach(line => {
-                    line.style.background = '';
-                });
-                timelineCompanies.forEach(comp => {
-                    comp.style.color = '';
-                });
+
+            html2pdf().set(opt).from(clone).save().then(function() {
+                // Remove the clone
+                document.body.removeChild(clone);
+            }).catch(function(error) {
+                console.error('PDF generation error:', error);
+                document.body.removeChild(clone);
+                alert('Error generating PDF. Please try again.');
             });
         }
 
