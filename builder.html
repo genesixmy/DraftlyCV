@@ -410,7 +410,7 @@
             display: grid;
             grid-template-columns: 200px 1fr;
             gap: 0;
-            min-height: 2244px; /* 2 x A4 height to ensure sidebar extends to 2nd page */
+            min-height: 100%;
         }
 
         .resume-sidebar {
@@ -420,7 +420,6 @@
             overflow-wrap: break-word;
             word-wrap: break-word;
             max-width: 200px;
-            min-height: 2244px; /* Ensure sidebar extends to at least 2 pages */
         }
 
         .resume-main {
@@ -1521,27 +1520,18 @@
         function downloadPDF() {
             const element = document.getElementById('resumePreview');
             const opt = {
-                margin: [10, 10, 10, 10], // top, left, bottom, right in mm
+                margin: 10,
                 filename: `resume_${resumeData.name.replace(/\s+/g, '_') || 'draft'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    letterRendering: true,
-                    logging: false,
-                    scrollY: 0,
-                    scrollX: 0,
-                    allowTaint: true,
-                    foreignObjectRendering: true
+                    logging: false
                 },
                 jsPDF: {
                     unit: 'mm',
                     format: 'a4',
-                    orientation: 'portrait',
-                    compress: true
-                },
-                pagebreak: {
-                    mode: ['avoid-all', 'css']
+                    orientation: 'portrait'
                 }
             };
 
