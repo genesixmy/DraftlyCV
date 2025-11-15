@@ -192,26 +192,11 @@
             border: 1px solid var(--border-color);
         }
 
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .item-header h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -228,7 +213,7 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.3);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
@@ -241,14 +226,13 @@
         .btn-add {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            width: 100%;
-            margin-top: 16px;
+            margin-top: 12px;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .btn-add:hover {
-            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -278,34 +262,53 @@
         .btn-outline-gradient {
             background: white;
             color: #667eea;
-            border: 2px solid transparent;
+            border: 2px solid;
             border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+            transition: all 0.3s ease;
         }
 
         .btn-outline-gradient:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border-image: none;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .btn-clear {
-            background: #e2e8f0;
-            color: var(--text-dark);
+            background: #ea4335;
+            color: white;
+            border: 2px solid #ea4335;
         }
 
         .btn-clear:hover {
-            background: #cbd5e0;
+            background: white;
+            color: #ea4335;
+            border: 2px solid #ea4335;
+            transform: translateY(-2px);
         }
 
         .button-group {
             display: flex;
-            flex-wrap: wrap;
             gap: 12px;
+            flex-wrap: wrap;
             margin-bottom: 24px;
         }
 
-        .button-group .btn {
-            flex: 1;
-            min-width: 140px;
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .item-header h4 {
+            color: var(--text-dark);
+            font-size: 0.9375rem;
+            font-weight: 500;
         }
 
         /* Theme Selector */
@@ -1464,76 +1467,93 @@
         function downloadPDF() {
             const element = document.getElementById('resumePreview');
 
-            // Clone the element to avoid modifying the original
-            const clone = element.cloneNode(true);
-            clone.style.position = 'absolute';
-            clone.style.left = '-9999px';
-            clone.style.width = '210mm'; // A4 width
-            clone.style.background = 'white';
-            document.body.appendChild(clone);
-
-            // Apply theme colors with solid colors instead of gradients for better PDF rendering
-            const headerGradient = clone.querySelector('.resume-header-gradient');
+            // Apply theme colors to elements before PDF generation
+            const headerGradient = element.querySelector('.resume-header-gradient');
+            const originalHeaderBg = headerGradient ? headerGradient.style.background : '';
             if (headerGradient) {
-                headerGradient.style.background = currentTheme.color1;
-                headerGradient.style.backgroundImage = 'none';
+                headerGradient.style.background = `linear-gradient(135deg, ${currentTheme.color1} 0%, ${currentTheme.color2} 100%)`;
             }
 
-            const skillBoxes = clone.querySelectorAll('.skill-box.filled');
+            const skillBoxes = element.querySelectorAll('.skill-box.filled');
             skillBoxes.forEach(box => {
-                box.style.background = currentTheme.color1;
-                box.style.backgroundImage = 'none';
+                box.style.background = `linear-gradient(135deg, ${currentTheme.color1} 0%, ${currentTheme.color2} 100%)`;
             });
 
-            const sectionTitles = clone.querySelectorAll('.resume-section-title');
-            sectionTitles.forEach(title => {
+            const sectionTitles = element.querySelectorAll('.resume-section-title');
+            const originalBorders = [];
+            sectionTitles.forEach((title, index) => {
+                originalBorders[index] = title.style.borderBottomColor;
                 title.style.borderBottomColor = currentTheme.color1;
             });
 
-            const timelineDots = clone.querySelectorAll('.timeline-dot');
-            timelineDots.forEach(dot => {
+            const timelineDots = element.querySelectorAll('.timeline-dot');
+            const originalDotColors = [];
+            timelineDots.forEach((dot, index) => {
+                originalDotColors[index] = {
+                    bg: dot.style.background,
+                    shadow: dot.style.boxShadow
+                };
                 dot.style.background = currentTheme.color1;
                 dot.style.boxShadow = `0 0 0 2px ${currentTheme.color1}`;
             });
 
-            const timelineLines = clone.querySelectorAll('.timeline-line');
-            timelineLines.forEach(line => {
-                line.style.background = currentTheme.color1;
-                line.style.backgroundImage = 'none';
+            const timelineLines = element.querySelectorAll('.timeline-line');
+            const originalLineColors = [];
+            timelineLines.forEach((line, index) => {
+                originalLineColors[index] = line.style.background;
+                line.style.background = `linear-gradient(to bottom, ${currentTheme.color1}, ${currentTheme.color2})`;
             });
 
-            const timelineCompanies = clone.querySelectorAll('.timeline-company');
-            timelineCompanies.forEach(comp => {
+            const timelineCompanies = element.querySelectorAll('.timeline-company');
+            const originalCompanyColors = [];
+            timelineCompanies.forEach((comp, index) => {
+                originalCompanyColors[index] = comp.style.color;
                 comp.style.color = currentTheme.color1;
             });
 
             const opt = {
-                margin: [10, 10, 10, 10],
+                margin: 10,
                 filename: `resume_${resumeData.name.replace(/\s+/g, '_') || 'draft'}_modern.pdf`,
-                image: { type: 'jpeg', quality: 0.95 },
+                image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: '#ffffff',
-                    windowWidth: 794, // A4 width in pixels at 96 DPI
-                    windowHeight: 1123 // A4 height in pixels at 96 DPI
+                    backgroundColor: '#ffffff'
                 },
                 jsPDF: {
                     unit: 'mm',
                     format: 'a4',
                     orientation: 'portrait'
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                }
             };
 
-            html2pdf().set(opt).from(clone).save().then(function() {
-                // Remove the clone
-                document.body.removeChild(clone);
-            }).catch(function(error) {
-                console.error('PDF generation error:', error);
-                document.body.removeChild(clone);
-                alert('Error generating PDF. Please try again.');
+            html2pdf().set(opt).from(element).save().then(function() {
+                // Restore original styles
+                if (headerGradient) {
+                    headerGradient.style.background = originalHeaderBg;
+                }
+
+                skillBoxes.forEach(box => {
+                    box.style.background = '';
+                });
+
+                sectionTitles.forEach((title, index) => {
+                    title.style.borderBottomColor = originalBorders[index];
+                });
+
+                timelineDots.forEach((dot, index) => {
+                    dot.style.background = originalDotColors[index].bg;
+                    dot.style.boxShadow = originalDotColors[index].shadow;
+                });
+
+                timelineLines.forEach((line, index) => {
+                    line.style.background = originalLineColors[index];
+                });
+
+                timelineCompanies.forEach((comp, index) => {
+                    comp.style.color = originalCompanyColors[index];
+                });
             });
         }
 
