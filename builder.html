@@ -725,6 +725,7 @@
                     <label class="file-upload-label" for="uploadFile">📤 Upload Resume Draft</label>
                     <input type="file" id="uploadFile" accept=".json" onchange="importResume(event)">
                     <button class="btn btn-success" onclick="downloadPDF()">📄 Download PDF</button>
+                    <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Clear All Data</button>
                 </div>
 
                 <!-- Personal Information -->
@@ -899,12 +900,24 @@
 
         // Load from localStorage on page load
         window.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-            renderExperience();
-            renderEducation();
-            renderSkills();
-            renderCertificates();
-            updatePreview();
+            try {
+                loadFromLocalStorage();
+                renderExperience();
+                renderEducation();
+                renderSkills();
+                renderCertificates();
+                updatePreview();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Clear potentially corrupted localStorage
+                localStorage.removeItem('draftlycv_resume');
+                // Reinitialize with default data
+                renderExperience();
+                renderEducation();
+                renderSkills();
+                renderCertificates();
+                updatePreview();
+            }
         });
 
         // Auto-save to localStorage
@@ -915,20 +928,41 @@
         function loadFromLocalStorage() {
             const saved = localStorage.getItem('draftlycv_resume');
             if (saved) {
-                resumeData = JSON.parse(saved);
+                try {
+                    const loadedData = JSON.parse(saved);
 
-                // Populate form fields
-                document.getElementById('name').value = resumeData.name || '';
-                document.getElementById('email').value = resumeData.email || '';
-                document.getElementById('phone').value = resumeData.phone || '';
-                document.getElementById('address').value = resumeData.address || '';
-                document.getElementById('website').value = resumeData.website || '';
-                document.getElementById('summary').value = resumeData.summary || '';
+                    // Merge with default structure to ensure all fields exist
+                    resumeData = {
+                        photo: loadedData.photo || '',
+                        name: loadedData.name || '',
+                        email: loadedData.email || '',
+                        phone: loadedData.phone || '',
+                        address: loadedData.address || '',
+                        website: loadedData.website || '',
+                        summary: loadedData.summary || '',
+                        experience: Array.isArray(loadedData.experience) ? loadedData.experience : [],
+                        education: Array.isArray(loadedData.education) ? loadedData.education : [],
+                        skills: Array.isArray(loadedData.skills) ? loadedData.skills : [],
+                        certificates: Array.isArray(loadedData.certificates) ? loadedData.certificates : []
+                    };
 
-                // Restore photo if exists
-                if (resumeData.photo) {
-                    document.getElementById('photoPreviewForm').src = resumeData.photo;
-                    document.getElementById('photoPreviewContainer').style.display = 'block';
+                    // Populate form fields
+                    document.getElementById('name').value = resumeData.name || '';
+                    document.getElementById('email').value = resumeData.email || '';
+                    document.getElementById('phone').value = resumeData.phone || '';
+                    document.getElementById('address').value = resumeData.address || '';
+                    document.getElementById('website').value = resumeData.website || '';
+                    document.getElementById('summary').value = resumeData.summary || '';
+
+                    // Restore photo if exists
+                    if (resumeData.photo) {
+                        document.getElementById('photoPreviewForm').src = resumeData.photo;
+                        document.getElementById('photoPreviewContainer').style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error parsing localStorage data:', error);
+                    // Clear corrupted data
+                    localStorage.removeItem('draftlycv_resume');
                 }
             }
         }
@@ -1445,6 +1479,48 @@
             };
 
             html2pdf().set(opt).from(element).save();
+        }
+
+        // Clear all data and reset
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                // Clear localStorage
+                localStorage.removeItem('draftlycv_resume');
+
+                // Reset resumeData
+                resumeData = {
+                    photo: '',
+                    name: '',
+                    email: '',
+                    phone: '',
+                    address: '',
+                    website: '',
+                    summary: '',
+                    experience: [],
+                    education: [],
+                    skills: [],
+                    certificates: []
+                };
+
+                // Clear form fields
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('website').value = '';
+                document.getElementById('summary').value = '';
+                document.getElementById('photoUpload').value = '';
+                document.getElementById('photoPreviewContainer').style.display = 'none';
+
+                // Re-render all sections
+                renderExperience();
+                renderEducation();
+                renderSkills();
+                renderCertificates();
+                updatePreview();
+
+                alert('All data has been cleared!');
+            }
         }
     </script>
 </body>
