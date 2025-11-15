@@ -487,74 +487,11 @@
             display: block;
         }
 
-        /* Ensure icons print correctly */
+        /* Print styles */
         @media print {
-            .contact-icon svg {
-                display: none;
-            }
-
-            .contact-icon {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #667eea;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 10px;
-                font-weight: bold;
-                flex-shrink: 0;
-            }
-
-            .resume-contact-item:nth-child(2) .contact-icon::after {
-                content: 'E';
-            }
-
-            .resume-contact-item:nth-child(3) .contact-icon::after {
-                content: 'P';
-            }
-
-            #preview-address-item .contact-icon::after {
-                content: 'A';
-            }
-
-            #preview-website-item .contact-icon::after {
-                content: 'W';
-            }
-
-            .resume-content {
-                display: table;
-                width: 100%;
-                table-layout: fixed;
-            }
-
-            .resume-sidebar {
-                display: table-cell;
-                width: 200px;
-                vertical-align: top;
-                background: #f8f9fa !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .resume-main {
-                display: table-cell;
-                vertical-align: top;
-            }
-
             body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-            }
-
-            .skill-box {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .skill-box.filled {
-                background: #667eea !important;
             }
         }
 
@@ -1633,10 +1570,37 @@
         function downloadPDF() {
             const element = document.getElementById('resumePreview');
 
-            // Temporarily set min-height for sidebar to ensure it extends
+            // Temporarily set sidebar height
             const sidebar = element.querySelector('.resume-sidebar');
-            const originalMinHeight = sidebar.style.minHeight;
-            sidebar.style.minHeight = '1000px';
+            const mainContent = element.querySelector('.resume-main');
+            const originalSidebarHeight = sidebar.style.height;
+            const originalSidebarBg = sidebar.style.background;
+
+            // Calculate needed height - ensure sidebar is at least as tall as main content + extra
+            const mainHeight = mainContent.scrollHeight;
+            const minHeight = Math.max(mainHeight, 1200); // At least 1200px
+            sidebar.style.height = minHeight + 'px';
+            sidebar.style.background = '#f8f9fa';
+
+            // Replace SVG icons with styled circles for PDF
+            const contactIcons = element.querySelectorAll('.contact-icon');
+            const originalIconHTML = [];
+
+            contactIcons.forEach((icon, index) => {
+                originalIconHTML[index] = icon.innerHTML;
+                // Create a circle div with inline styles
+                const circle = document.createElement('div');
+                circle.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background: #667eea;';
+
+                icon.innerHTML = '';
+                icon.appendChild(circle);
+            });
+
+            // Ensure skill boxes keep colors
+            const skillBoxes = element.querySelectorAll('.skill-box.filled');
+            skillBoxes.forEach(box => {
+                box.style.background = '#667eea';
+            });
 
             const opt = {
                 margin: 10,
@@ -1656,8 +1620,19 @@
             };
 
             html2pdf().set(opt).from(element).save().then(function() {
-                // Restore original min-height
-                sidebar.style.minHeight = originalMinHeight;
+                // Restore original sidebar height
+                sidebar.style.height = originalSidebarHeight;
+                sidebar.style.background = originalSidebarBg;
+
+                // Restore original icons
+                contactIcons.forEach((icon, index) => {
+                    icon.innerHTML = originalIconHTML[index];
+                });
+
+                // Restore skill boxes
+                skillBoxes.forEach(box => {
+                    box.style.background = '';
+                });
             });
         }
 
