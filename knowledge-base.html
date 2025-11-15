@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - How to Use DraftlyCV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4facfe;
+            --primary-dark: #00f2fe;
+            --text-dark: #2d3748;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --info-color: #4299e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .kb-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kb-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+
+        .kb-header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .kb-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .kb-header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            margin-bottom: 32px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 16px 24px;
+            padding-left: 48px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.25rem;
+        }
+
+        /* Main Container */
+        .kb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Categories Grid */
+        .categories-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-color);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+
+        .category-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .category-card p {
+            font-size: 0.9375rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        .article-count {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* Articles Section */
+        .articles-section {
+            margin-bottom: 60px;
+        }
+
+        .article-group {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .article-group h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .article-group h2::before {
+            content: '';
+            width: 4px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 2px;
+        }
+
+        .article-group > p {
+            color: var(--text-medium);
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .article {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .article:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .article h3 {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .article h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .article p {
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        .article ul, .article ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .article li {
+            color: var(--text-medium);
+            margin-bottom: 8px;
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        .article strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid var(--info-color);
+            padding: 16px 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+
+        .info-box.success {
+            background: #f0fff4;
+            border-left-color: var(--success-color);
+        }
+
+        .info-box.warning {
+            background: #fffaf0;
+            border-left-color: var(--warning-color);
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            color: var(--text-dark);
+        }
+
+        /* Code Blocks */
+        .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-right: 8px;
+        }
+
+        /* Back to Home Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: white;
+            color: var(--text-dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 32px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        .kb-footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .kb-footer p {
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .kb-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .kb-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .kb-header h1 {
+                font-size: 2rem;
+            }
+
+            .kb-header p {
+                font-size: 1rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .article-group {
+                padding: 24px;
+            }
+
+            .article-group h2 {
+                font-size: 1.5rem;
+            }
+
+            .article h3 {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Search Results */
+        .search-results {
+            display: none;
+            margin-top: 32px;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-medium);
+        }
+
+        .highlight {
+            background-color: #fef08a;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Search -->
+    <div class="kb-header">
+        <div class="kb-header-content">
+            <h1>📚 DraftlyCV Knowledge Base</h1>
+            <p>Everything you need to know to create stunning resumes</p>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-box" id="searchInput" placeholder="Search for help articles..." oninput="searchArticles()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="kb-container">
+        <a href="index.html" class="back-button">
+            ← Back to Home
+        </a>
+
+        <!-- Categories Section -->
+        <div class="categories-section" id="categoriesSection">
+            <h2 class="section-title">Browse by Category</h2>
+            <div class="categories-grid">
+                <div class="category-card" onclick="scrollToSection('getting-started')">
+                    <div class="category-icon">🚀</div>
+                    <h3>Getting Started</h3>
+                    <p>Learn the basics of using DraftlyCV and create your first resume</p>
+                    <span class="article-count">3 articles</span>
+                </div>
+
+                <div class="category-card" onclick="scrollToSection('building-resume')">
+                    <div class="category-icon">✏️</div>
+                    <h3>Building Your Resume</h3>
+                    <p>Add and manage your personal info, experience, education, and more</p>
+                    <span class="article-count">6 articles</span>
+                </div>
+
+                <div class="category-card" onclick="scrollToSection('customization')">
+                    <div class="category-icon">🎨</div>
+                    <h3>Customization</h3>
+                    <p>Personalize your resume with themes, colors, and design options</p>
+                    <span class="article-count">2 articles</span>
+                </div>
+
+                <div class="category-card" onclick="scrollToSection('export-import')">
+                    <div class="category-icon">💾</div>
+                    <h3>Export & Save</h3>
+                    <p>Download PDFs, export drafts, and manage your resume data</p>
+                    <span class="article-count">3 articles</span>
+                </div>
+
+                <div class="category-card" onclick="scrollToSection('mobile')">
+                    <div class="category-icon">📱</div>
+                    <h3>Mobile Usage</h3>
+                    <p>Tips for using DraftlyCV on smartphones and tablets</p>
+                    <span class="article-count">2 articles</span>
+                </div>
+
+                <div class="category-card" onclick="scrollToSection('tips')">
+                    <div class="category-icon">💡</div>
+                    <h3>Tips & Best Practices</h3>
+                    <p>Professional advice to make your resume stand out</p>
+                    <span class="article-count">4 articles</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results Section (Hidden by default) -->
+        <div class="search-results" id="searchResults"></div>
+
+        <!-- Articles Section -->
+        <div class="articles-section" id="articlesSection">
+            <!-- Getting Started -->
+            <div class="article-group" id="getting-started">
+                <h2>🚀 Getting Started</h2>
+                <p>New to DraftlyCV? Start here to learn the basics.</p>
+
+                <div class="article">
+                    <h3>What is DraftlyCV?</h3>
+                    <p>DraftlyCV is a free, modern web-based resume builder designed to help you create professional resumes quickly and easily. With two stunning design options and intuitive editing tools, you can craft a resume that stands out.</p>
+
+                    <h4>Key Features:</h4>
+                    <ul>
+                        <li><strong>Two Modern Designs:</strong> Choose between Sidebar layout (Design 1) or Timeline layout (Design 2)</li>
+                        <li><strong>Real-time Preview:</strong> See your changes instantly as you type</li>
+                        <li><strong>Photo Upload:</strong> Add a professional photo to your resume</li>
+                        <li><strong>Theme Colors:</strong> 5 beautiful color themes to match your style</li>
+                        <li><strong>Export & Import:</strong> Save your work as JSON and continue later</li>
+                        <li><strong>PDF Download:</strong> Generate high-quality PDF resumes</li>
+                        <li><strong>Mobile-Friendly:</strong> Edit your resume on any device</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>✓ Best of all:</strong> DraftlyCV works entirely in your browser. No sign-up required, and your data stays private on your device!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Creating Your First Resume</h3>
+                    <p>Follow these simple steps to create your first resume with DraftlyCV:</p>
+
+                    <ol>
+                        <li><strong>From the Homepage:</strong> Click the "Create Your Resume" button</li>
+                        <li><strong>Choose Your Design:</strong> Select between Design 1 (Sidebar) or Design 2 (Timeline)</li>
+                        <li><strong>Fill in Your Information:</strong> Start with personal details, then add your experience, education, skills, and certificates</li>
+                        <li><strong>Customize Colors:</strong> Pick a theme color that matches your personal brand</li>
+                        <li><strong>Preview & Download:</strong> Review your resume in real-time and download as PDF when ready</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <p><strong>💡 Pro Tip:</strong> Your progress is automatically saved in your browser, so you can close the page and come back anytime!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Choosing Between Design 1 and Design 2</h3>
+                    <p>DraftlyCV offers two distinct resume designs to suit different preferences and industries:</p>
+
+                    <h4>Design 1: Sidebar Layout</h4>
+                    <ul>
+                        <li><strong>Style:</strong> Professional sidebar with contact info and skills on the left</li>
+                        <li><strong>Best For:</strong> Traditional industries, corporate roles, academic positions</li>
+                        <li><strong>Features:</strong> Clean separation of content, easy-to-scan layout</li>
+                    </ul>
+
+                    <h4>Design 2: Timeline Layout</h4>
+                    <ul>
+                        <li><strong>Style:</strong> Modern timeline design with gradient header and centered layout</li>
+                        <li><strong>Best For:</strong> Creative fields, startups, Gen Z professionals</li>
+                        <li><strong>Features:</strong> Contemporary look, visual timeline dots, gradient accents</li>
+                    </ul>
+
+                    <div class="info-box warning">
+                        <p><strong>⚠️ Important:</strong> Each design saves data separately. If you switch designs, you'll need to re-enter your information or import a previously exported draft.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Building Your Resume -->
+            <div class="article-group" id="building-resume">
+                <h2>✏️ Building Your Resume</h2>
+                <p>Learn how to add and manage all sections of your resume.</p>
+
+                <div class="article">
+                    <h3>Personal Information & Photo</h3>
+                    <p>The personal information section is the foundation of your resume. It appears at the top and includes your contact details.</p>
+
+                    <h4>Required Fields:</h4>
+                    <ul>
+                        <li><strong>Full Name:</strong> Your complete name as you want it to appear professionally</li>
+                        <li><strong>Job Title:</strong> Your current role or the position you're seeking (e.g., "Senior Software Engineer")</li>
+                        <li><strong>Email:</strong> A professional email address</li>
+                        <li><strong>Phone:</strong> Best contact number with country code if relevant</li>
+                    </ul>
+
+                    <h4>Optional Fields:</h4>
+                    <ul>
+                        <li><strong>Address:</strong> City and country (full address not necessary for privacy)</li>
+                        <li><strong>Website/Portfolio:</strong> LinkedIn profile, personal website, or portfolio URL</li>
+                        <li><strong>Professional Summary:</strong> 2-3 sentences highlighting your key strengths and career goals</li>
+                    </ul>
+
+                    <h4>Adding a Photo:</h4>
+                    <ol>
+                        <li>Click the "Choose Photo" button in the Personal Information section</li>
+                        <li>Select a professional headshot (JPEG or PNG format)</li>
+                        <li>The photo will appear in both the form preview and final resume</li>
+                        <li>To remove: Click "Remove Photo" button</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <p><strong>📸 Photo Tips:</strong> Use a high-quality headshot with good lighting, professional attire, and a neutral background. Smile naturally and ensure the photo is recent!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Work Experience</h3>
+                    <p>The Work Experience section showcases your professional history and achievements.</p>
+
+                    <h4>Adding Experience:</h4>
+                    <ol>
+                        <li>Click the "+ Add Experience" button</li>
+                        <li>Fill in the following fields:
+                            <ul>
+                                <li><strong>Job Title:</strong> Your role (e.g., "Marketing Manager")</li>
+                                <li><strong>Company:</strong> Organization name</li>
+                                <li><strong>Duration:</strong> Time period (e.g., "Jan 2020 - Present" or "2018 - 2020")</li>
+                                <li><strong>Description:</strong> Key responsibilities and achievements</li>
+                            </ul>
+                        </li>
+                        <li>Click "Save" to add the experience</li>
+                        <li>Repeat for all relevant positions</li>
+                    </ol>
+
+                    <h4>Managing Experience Entries:</h4>
+                    <ul>
+                        <li><strong>Edit:</strong> Click the blue "Edit" button on any entry</li>
+                        <li><strong>Delete:</strong> Click the red "Remove" button</li>
+                        <li><strong>Order:</strong> Add experiences in reverse chronological order (most recent first)</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>✍️ Writing Tips:</strong> Use action verbs (led, developed, managed), quantify achievements (increased sales by 30%), and focus on results rather than just duties.</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Education</h3>
+                    <p>The Education section displays your academic qualifications.</p>
+
+                    <h4>Adding Education:</h4>
+                    <ol>
+                        <li>Click "+ Add Education" button</li>
+                        <li>Enter:
+                            <ul>
+                                <li><strong>Degree:</strong> Full degree name (e.g., "Bachelor of Science in Computer Science")</li>
+                                <li><strong>School:</strong> University or institution name</li>
+                                <li><strong>Year:</strong> Graduation year or range (e.g., "2016 - 2020")</li>
+                                <li><strong>Description:</strong> GPA, honors, relevant coursework (optional)</li>
+                            </ul>
+                        </li>
+                        <li>Click "Save"</li>
+                    </ol>
+
+                    <h4>Best Practices:</h4>
+                    <ul>
+                        <li>List in reverse chronological order (most recent first)</li>
+                        <li>Include GPA if it's 3.5 or higher</li>
+                        <li>Mention honors, scholarships, or awards</li>
+                        <li>For recent graduates: include relevant coursework and projects</li>
+                    </ul>
+                </div>
+
+                <div class="article">
+                    <h3>Skills & Proficiency Levels</h3>
+                    <p>The Skills section highlights your technical and soft skills with visual proficiency indicators.</p>
+
+                    <h4>Adding Skills:</h4>
+                    <ol>
+                        <li>Click "+ Add Skill" button</li>
+                        <li>Enter the skill name (e.g., "JavaScript", "Project Management", "Adobe Photoshop")</li>
+                        <li>Set proficiency level using the slider (0-100%):
+                            <ul>
+                                <li>20-40%: Beginner/Basic</li>
+                                <li>40-60%: Intermediate</li>
+                                <li>60-80%: Advanced</li>
+                                <li>80-100%: Expert/Master</li>
+                            </ul>
+                        </li>
+                        <li>Click "Save"</li>
+                    </ol>
+
+                    <h4>Skill Categories:</h4>
+                    <ul>
+                        <li><strong>Technical Skills:</strong> Programming languages, software, tools</li>
+                        <li><strong>Soft Skills:</strong> Communication, leadership, teamwork</li>
+                        <li><strong>Languages:</strong> English (Native), Spanish (Fluent), etc.</li>
+                    </ul>
+
+                    <div class="info-box warning">
+                        <p><strong>⚠️ Be Honest:</strong> Only include skills you can confidently demonstrate. Inflating proficiency levels can backfire in interviews!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Certificates & Achievements</h3>
+                    <p>Showcase your professional certifications, courses, and achievements.</p>
+
+                    <h4>Adding Certificates:</h4>
+                    <ol>
+                        <li>Click "+ Add Certificate" button</li>
+                        <li>Fill in:
+                            <ul>
+                                <li><strong>Certificate Name:</strong> Full certification title</li>
+                                <li><strong>Issuer:</strong> Organization that issued it (e.g., "Google", "Coursera", "AWS")</li>
+                                <li><strong>Year:</strong> Year obtained or "2020 - 2025" for validity period</li>
+                                <li><strong>Description:</strong> Brief details about what the certification covers (optional)</li>
+                            </ul>
+                        </li>
+                        <li>Click "Save"</li>
+                    </ol>
+
+                    <h4>What to Include:</h4>
+                    <ul>
+                        <li>Professional certifications (PMP, CPA, AWS Certified, etc.)</li>
+                        <li>Online courses from recognized platforms</li>
+                        <li>Industry-specific licenses</li>
+                        <li>Awards and honors</li>
+                        <li>Published papers or patents</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>💼 Stand Out:</strong> Certifications show commitment to professional development and can set you apart from other candidates!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Editing and Removing Entries</h3>
+                    <p>All sections (Experience, Education, Skills, Certificates) work the same way:</p>
+
+                    <h4>To Edit:</h4>
+                    <ol>
+                        <li>Find the entry you want to modify</li>
+                        <li>Click the blue "Edit" button</li>
+                        <li>Make your changes in the form fields</li>
+                        <li>Click "Save" to apply changes</li>
+                    </ol>
+
+                    <h4>To Remove:</h4>
+                    <ol>
+                        <li>Find the entry you want to delete</li>
+                        <li>Click the red "Remove" button</li>
+                        <li>The entry is immediately deleted (no undo available)</li>
+                    </ol>
+
+                    <div class="info-box warning">
+                        <p><strong>⚠️ Tip:</strong> Before removing content, consider exporting a draft first. You can always import it later if you change your mind!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization -->
+            <div class="article-group" id="customization">
+                <h2>🎨 Customization</h2>
+                <p>Make your resume uniquely yours with themes and color options.</p>
+
+                <div class="article">
+                    <h3>Theme Colors</h3>
+                    <p>DraftlyCV offers 5 beautiful gradient color themes to personalize your resume.</p>
+
+                    <h4>Available Themes:</h4>
+                    <ol>
+                        <li><strong>Purple:</strong> Professional and creative (Purple to Violet gradient)</li>
+                        <li><strong>Blue (Default):</strong> Trust and reliability (Blue to Cyan gradient)</li>
+                        <li><strong>Green:</strong> Growth and harmony (Green to Teal gradient)</li>
+                        <li><strong>Teal:</strong> Modern and fresh (Teal to Lime gradient)</li>
+                        <li><strong>Red:</strong> Bold and energetic (Red to Orange gradient)</li>
+                    </ol>
+
+                    <h4>How to Change Theme:</h4>
+                    <ol>
+                        <li>Scroll to the "Choose Theme Color" section in the editor</li>
+                        <li>Click on any color circle to apply that theme</li>
+                        <li>The preview updates instantly showing:
+                            <ul>
+                                <li>Header gradient background</li>
+                                <li>Timeline dots and lines (Design 2)</li>
+                                <li>Skill proficiency bars</li>
+                                <li>Section accents</li>
+                            </ul>
+                        </li>
+                        <li>Your theme choice is automatically saved</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <p><strong>🎨 Color Psychology:</strong> Blue suggests trust (finance, healthcare), Green for sustainability/growth, Purple for creativity, Red for energy/passion!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Design Switching</h3>
+                    <p>You can switch between Design 1 and Design 2 at any time.</p>
+
+                    <h4>To Switch Designs:</h4>
+                    <ol>
+                        <li>Click "← Back to Theme Selector" at the top of the editor</li>
+                        <li>Choose a different design from the theme selector page</li>
+                        <li>You'll be taken to the new design's editor</li>
+                    </ol>
+
+                    <div class="info-box warning">
+                        <p><strong>⚠️ Important Note:</strong> Each design maintains separate data. Your Design 1 data won't automatically appear in Design 2. To transfer data:
+                        <ol style="margin-top: 12px;">
+                            <li>Export your draft from Design 1</li>
+                            <li>Switch to Design 2</li>
+                            <li>Import the draft file</li>
+                        </ol>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export & Save -->
+            <div class="article-group" id="export-import">
+                <h2>💾 Export & Save</h2>
+                <p>Save your work and download professional PDF resumes.</p>
+
+                <div class="article">
+                    <h3>Export Draft (JSON)</h3>
+                    <p>Export your resume data as a JSON file to save locally or transfer between designs.</p>
+
+                    <h4>How to Export:</h4>
+                    <ol>
+                        <li>Click the "Export Draft" button at the top of the editor</li>
+                        <li>A JSON file will download automatically (e.g., "DraftlyCV_Resume.json")</li>
+                        <li>Save this file somewhere safe (Desktop, Google Drive, etc.)</li>
+                    </ol>
+
+                    <h4>When to Export:</h4>
+                    <ul>
+                        <li>Before clearing your browser data or cache</li>
+                        <li>To create backups of different resume versions</li>
+                        <li>To transfer resume data between Design 1 and Design 2</li>
+                        <li>To work on multiple resumes (export each separately)</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>💡 Best Practice:</strong> Export your draft regularly! Think of it as "Save As" for your resume. Keep versions like "Resume_Software_Job.json" and "Resume_Manager_Job.json"</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Upload Draft (Import)</h3>
+                    <p>Load a previously exported resume draft back into the editor.</p>
+
+                    <h4>How to Import:</h4>
+                    <ol>
+                        <li>Click the "Upload Draft" button</li>
+                        <li>Browse and select your JSON file</li>
+                        <li>The file loads instantly and populates all fields</li>
+                        <li>Your previous data is replaced with the imported data</li>
+                    </ol>
+
+                    <h4>Common Uses:</h4>
+                    <ul>
+                        <li>Restoring a backup</li>
+                        <li>Working on a different computer</li>
+                        <li>Switching between resume versions for different jobs</li>
+                        <li>Transferring data from Design 1 to Design 2 (or vice versa)</li>
+                    </ul>
+
+                    <div class="info-box warning">
+                        <p><strong>⚠️ Warning:</strong> Importing a draft will replace your current resume data. Export your current work first if you want to keep it!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Download PDF</h3>
+                    <p>Generate a professional, high-quality PDF of your resume ready for applications.</p>
+
+                    <h4>How to Download PDF:</h4>
+                    <ol>
+                        <li>Ensure all your information is complete and accurate</li>
+                        <li>Choose your preferred theme color</li>
+                        <li>Click the "Download PDF" button</li>
+                        <li>The PDF generates automatically and downloads to your device</li>
+                        <li>File is named "resume.pdf" by default</li>
+                    </ol>
+
+                    <h4>PDF Features:</h4>
+                    <ul>
+                        <li>Professional quality suitable for printing</li>
+                        <li>All colors and gradients properly rendered</li>
+                        <li>Optimized A4/Letter size format</li>
+                        <li>No watermarks or branding</li>
+                        <li>Photos included if uploaded</li>
+                    </ul>
+
+                    <h4>Before Downloading:</h4>
+                    <ul>
+                        <li>✓ Review all sections for typos and errors</li>
+                        <li>✓ Check that all dates are correct</li>
+                        <li>✓ Verify contact information is current</li>
+                        <li>✓ Ensure your photo looks professional (if included)</li>
+                        <li>✓ Preview how the theme color looks</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>📄 Pro Tip:</strong> Save different PDF versions for different jobs (e.g., "Resume_Google.pdf", "Resume_Amazon.pdf") after tailoring content!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Usage -->
+            <div class="article-group" id="mobile">
+                <h2>📱 Mobile Usage</h2>
+                <p>DraftlyCV works great on smartphones and tablets!</p>
+
+                <div class="article">
+                    <h3>Using DraftlyCV on Mobile Devices</h3>
+                    <p>The editor is fully responsive and optimized for mobile use.</p>
+
+                    <h4>Mobile Features:</h4>
+                    <ul>
+                        <li><strong>Touch-Friendly:</strong> All buttons and inputs work perfectly with touch</li>
+                        <li><strong>Adaptive Layout:</strong> Editor and preview stack vertically on small screens</li>
+                        <li><strong>Preview Toggle:</strong> Special "View Preview" button to see your resume</li>
+                        <li><strong>Auto-Save:</strong> Your work saves automatically just like on desktop</li>
+                    </ul>
+
+                    <h4>Mobile Workflow:</h4>
+                    <ol>
+                        <li>Fill in your information in the left panel (this is your editing area)</li>
+                        <li>Click "View Preview" button to see how your resume looks</li>
+                        <li>Click "✕ Close Preview" to return to editing</li>
+                        <li>Switch back and forth as needed</li>
+                        <li>Export, import, and download PDF all work on mobile!</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <p><strong>💡 Mobile Tip:</strong> For best experience on phones, use landscape mode when reviewing your final resume preview!</p>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <h3>Mobile Preview Toggle</h3>
+                    <p>On mobile devices, the editor and preview don't fit side-by-side, so we provide a toggle button.</p>
+
+                    <h4>How It Works:</h4>
+                    <ul>
+                        <li>By default, you see the editing panel</li>
+                        <li>Click "View Preview" to switch to preview mode</li>
+                        <li>In preview mode, the "✕ Close Preview" button appears at the top-right</li>
+                        <li>Click it to return to the editing panel</li>
+                    </ul>
+
+                    <div class="info-box success">
+                        <p><strong>✓ Best Practice:</strong> Make a few changes, then preview. Repeat this cycle rather than constantly switching!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips & Best Practices -->
+            <div class="article-group" id="tips">
+                <h2>💡 Tips & Best Practices</h2>
+                <p>Professional advice to create standout resumes.</p>
+
+                <div class="article">
+                    <h3>Resume Writing Best Practices</h3>
+
+                    <h4>Content Guidelines:</h4>
+                    <ul>
+                        <li><strong>Keep It Concise:</strong> Aim for 1 page if you have &lt;10 years experience, max 2 pages otherwise</li>
+                        <li><strong>Tailor for Each Job:</strong> Customize your summary and experience for each application</li>
+                        <li><strong>Use Action Verbs:</strong> Start bullets with words like "Led", "Developed", "Managed", "Increased"</li>
+                        <li><strong>Quantify Achievements:</strong> Include numbers (e.g., "Increased sales by 30%", "Managed team of 12")</li>
+                        <li><strong>Focus on Results:</strong> Emphasize what you achieved, not just what you did</li>
+                        <li><strong>Recent First:</strong> Always list experience in reverse chronological order</li>
+                    </ul>
+
+                    <h4>What NOT to Include:</h4>
+                    <ul>
+                        <li>❌ Personal information like age, marital status, religion</li>
+                        <li>❌ Unprofessional email addresses (use firstname.lastname@email.com)</li>
+                        <li>❌ References (add "Available upon request" if needed)</li>
+                        <li>❌ Salary information or expectations</li>
+                        <li>❌ Hobbies unless directly relevant to the job</li>
+                    </ul>
+                </div>
+
+                <div class="article">
+                    <h3>Design & Formatting Tips</h3>
+
+                    <h4>Visual Appeal:</h4>
+                    <ul>
+                        <li><strong>Choose Colors Wisely:</strong> Match theme to industry (Blue for corporate, Purple for creative)</li>
+                        <li><strong>Professional Photo:</strong> Use a high-quality headshot with good lighting</li>
+                        <li><strong>Consistent Dates:</strong> Use same format throughout (e.g., "Jan 2020 - Dec 2022")</li>
+                        <li><strong>White Space:</strong> Don't overcrowd - leave breathing room between sections</li>
+                    </ul>
+
+                    <h4>ATS-Friendly Tips:</h4>
+                    <p>Many companies use Applicant Tracking Systems (ATS) to scan resumes:</p>
+                    <ul>
+                        <li>Use standard section titles (Work Experience, Education, Skills)</li>
+                        <li>Include relevant keywords from the job description</li>
+                        <li>Avoid graphics-heavy designs (both our designs work well with ATS)</li>
+                        <li>Submit as PDF to preserve formatting</li>
+                    </ul>
+                </div>
+
+                <div class="article">
+                    <h3>Data Management Tips</h3>
+
+                    <h4>Organizing Multiple Resumes:</h4>
+                    <ul>
+                        <li><strong>Version Control:</strong> Export drafts with descriptive names (e.g., "Resume_SoftwareEng_2024.json")</li>
+                        <li><strong>Master Resume:</strong> Keep one comprehensive version with everything, then create tailored versions</li>
+                        <li><strong>Regular Backups:</strong> Export monthly or before major browser updates</li>
+                        <li><strong>Cloud Storage:</strong> Store exported JSON files in Google Drive/Dropbox for access anywhere</li>
+                    </ul>
+
+                    <h4>Privacy & Security:</h4>
+                    <ul>
+                        <li>All data stays in your browser (localStorage) - nothing sent to servers</li>
+                        <li>Exported JSON files contain all your data - store securely</li>
+                        <li>Clearing browser data will erase your saved resume (export first!)</li>
+                        <li>Incognito/Private browsing won't save your data</li>
+                    </ul>
+                </div>
+
+                <div class="article">
+                    <h3>Troubleshooting Common Issues</h3>
+
+                    <h4>My data disappeared!</h4>
+                    <ul>
+                        <li><strong>Cause:</strong> Browser cache was cleared or using incognito mode</li>
+                        <li><strong>Solution:</strong> Import your last exported JSON file</li>
+                        <li><strong>Prevention:</strong> Export drafts regularly!</li>
+                    </ul>
+
+                    <h4>PDF looks different from preview</h4>
+                    <ul>
+                        <li><strong>Cause:</strong> Browser rendering differences</li>
+                        <li><strong>Solution:</strong> Try a different browser (Chrome recommended)</li>
+                        <li><strong>Check:</strong> Ensure all content fits properly before downloading</li>
+                    </ul>
+
+                    <h4>Photo not uploading</h4>
+                    <ul>
+                        <li><strong>Check:</strong> File must be JPG or PNG format</li>
+                        <li><strong>Size:</strong> Very large files (>10MB) may have issues - compress first</li>
+                        <li><strong>Format:</strong> Some HEIC or WebP formats may need conversion</li>
+                    </ul>
+
+                    <h4>Can't see mobile preview button</h4>
+                    <ul>
+                        <li><strong>Cause:</strong> Screen is wide enough for split view</li>
+                        <li><strong>Expected:</strong> Button only appears on screens narrower than 968px</li>
+                        <li><strong>Resize:</strong> Make your browser window smaller to test mobile view</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <p><strong>💬 Still having issues?</strong> Try refreshing the page or clearing just the DraftlyCV data using "Clear All Data" button, then import your draft again.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="kb-footer">
+        <p>Can't find what you're looking for?</p>
+        <p><a href="index.html">← Back to DraftlyCV Home</a></p>
+        <p style="margin-top: 24px; font-size: 0.875rem; opacity: 0.7;">© 2024 DraftlyCV. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Smooth scroll to section
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                const offset = 100;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Search functionality
+        let searchTimeout;
+        function searchArticles() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+                const categoriesSection = document.getElementById('categoriesSection');
+                const articlesSection = document.getElementById('articlesSection');
+                const searchResults = document.getElementById('searchResults');
+
+                if (searchTerm.length < 2) {
+                    // Show normal view
+                    categoriesSection.style.display = 'block';
+                    articlesSection.style.display = 'block';
+                    searchResults.classList.remove('active');
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                // Hide normal sections, show results
+                categoriesSection.style.display = 'none';
+                articlesSection.style.display = 'none';
+                searchResults.classList.add('active');
+
+                // Search through articles
+                const allArticles = document.querySelectorAll('.article');
+                const results = [];
+
+                allArticles.forEach(article => {
+                    const title = article.querySelector('h3').textContent;
+                    const content = article.textContent.toLowerCase();
+
+                    if (content.includes(searchTerm)) {
+                        const articleGroup = article.closest('.article-group');
+                        const groupTitle = articleGroup.querySelector('h2').textContent;
+
+                        results.push({
+                            title: title,
+                            category: groupTitle,
+                            element: article.cloneNode(true),
+                            relevance: (title.toLowerCase().includes(searchTerm) ? 100 : 50)
+                        });
+                    }
+                });
+
+                // Display results
+                if (results.length === 0) {
+                    searchResults.innerHTML = `
+                        <div class="no-results">
+                            <h3>No results found for "${searchTerm}"</h3>
+                            <p>Try different keywords or browse categories above</p>
+                        </div>
+                    `;
+                } else {
+                    // Sort by relevance
+                    results.sort((a, b) => b.relevance - a.relevance);
+
+                    let html = `<div class="article-group">
+                        <h2>🔍 Search Results</h2>
+                        <p>Found ${results.length} article${results.length > 1 ? 's' : ''} matching "${searchTerm}"</p>
+                    `;
+
+                    results.forEach(result => {
+                        html += `
+                            <div class="article">
+                                <div style="font-size: 0.875rem; color: var(--primary-color); margin-bottom: 8px;">${result.category}</div>
+                                ${result.element.innerHTML}
+                            </div>
+                        `;
+                    });
+
+                    html += `</div>`;
+                    searchResults.innerHTML = html;
+
+                    // Highlight search terms
+                    highlightSearchTerm(searchTerm);
+                }
+            }, 300);
+        }
+
+        function highlightSearchTerm(term) {
+            const searchResults = document.getElementById('searchResults');
+            const textNodes = [];
+            const walker = document.createTreeWalker(
+                searchResults,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                if (node.nodeValue.toLowerCase().includes(term)) {
+                    textNodes.push(node);
+                }
+            }
+
+            textNodes.forEach(node => {
+                const regex = new RegExp(`(${term})`, 'gi');
+                const parent = node.parentNode;
+                const fragment = document.createDocumentFragment();
+                const parts = node.nodeValue.split(regex);
+
+                parts.forEach(part => {
+                    if (part.toLowerCase() === term.toLowerCase()) {
+                        const span = document.createElement('span');
+                        span.className = 'highlight';
+                        span.textContent = part;
+                        fragment.appendChild(span);
+                    } else {
+                        fragment.appendChild(document.createTextNode(part));
+                    }
+                });
+
+                parent.replaceChild(fragment, node);
+            });
+        }
+
+        // Clear search on escape
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                searchArticles();
+            }
+        });
+    </script>
+</body>
+</html>

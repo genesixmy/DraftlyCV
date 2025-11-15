@@ -84,19 +84,40 @@
             padding: 0 24px;
         }
 
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             color: var(--text-medium);
             text-decoration: none;
-            margin-bottom: 32px;
             font-size: 0.9375rem;
             transition: color 0.3s ease;
         }
 
         .back-link:hover {
             color: var(--text-dark);
+        }
+
+        .help-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .help-link:hover {
+            color: var(--primary-dark);
         }
 
         .designs-grid {
@@ -405,9 +426,14 @@
     </div>
 
     <div class="container">
-        <a href="index.html" class="back-link">
-            ← Back to Home
-        </a>
+        <div class="top-nav">
+            <a href="index.html" class="back-link">
+                ← Back to Home
+            </a>
+            <a href="knowledge-base.html" class="help-link">
+                📚 Help Center
+            </a>
+        </div>
 
         <div class="designs-grid">
             <!-- Design 1: Sidebar Layout -->
