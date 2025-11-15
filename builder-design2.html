@@ -362,7 +362,7 @@
         .theme-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .theme-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .theme-green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .theme-orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .theme-orange { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .theme-red { background: linear-gradient(135deg, #f83600 0%, #f9d423 100%); }
 
         /* Resume Preview - Modern Timeline Design */
@@ -398,9 +398,9 @@
         }
 
         .resume-header-gradient h1 {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
@@ -572,20 +572,21 @@
         .mobile-preview-close {
             display: none;
             position: fixed;
-            top: 24px;
-            right: 24px;
+            top: 20px;
+            right: 20px;
             z-index: 1000;
-            background: white;
-            color: var(--text-dark);
-            border: 2px solid var(--border-color);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            font-size: 1.5rem;
+            background: #ea4335;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+        }
+
+        .mobile-preview-close:hover {
+            background: #d33b2e;
         }
 
         @media (max-width: 968px) {
@@ -624,7 +625,7 @@
             }
 
             .mobile-preview-active .mobile-preview-close {
-                display: flex !important;
+                display: block !important;
             }
 
             .btn-danger {
@@ -739,7 +740,7 @@
                     <div class="theme-color theme-purple" onclick="changeTheme('purple', '#667eea', '#764ba2')" title="Purple"></div>
                     <div class="theme-color theme-blue active" onclick="changeTheme('blue', '#4facfe', '#00f2fe')" title="Blue"></div>
                     <div class="theme-color theme-green" onclick="changeTheme('green', '#43e97b', '#38f9d7')" title="Green"></div>
-                    <div class="theme-color theme-orange" onclick="changeTheme('orange', '#fa709a', '#fee140')" title="Orange"></div>
+                    <div class="theme-color theme-orange" onclick="changeTheme('orange', '#11998e', '#38ef7d')" title="Teal"></div>
                     <div class="theme-color theme-red" onclick="changeTheme('red', '#f83600', '#f9d423')" title="Red"></div>
                 </div>
             </div>
@@ -813,7 +814,7 @@
                 </div>
 
                 <div class="preview-section">
-                    <button class="mobile-preview-close" onclick="toggleMobilePreview()">✕</button>
+                    <button class="mobile-preview-close" onclick="toggleMobilePreview()">✕ Close Preview</button>
                     <div id="resumePreview">
                 <div class="resume-content">
                     <!-- Header with Gradient -->
