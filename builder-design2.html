@@ -1893,6 +1893,8 @@
             errorState.style.display = 'none';
 
             try {
+                console.log('🔄 Starting share link generation...');
+
                 // Prepare data for sharing
                 const shareData = {
                     resumeData: resumeData,
@@ -1900,7 +1902,14 @@
                     createdAt: new Date().toISOString()
                 };
 
+                console.log('📦 Data prepared:', {
+                    hasName: !!resumeData.name,
+                    hasEmail: !!resumeData.email,
+                    designType: shareData.designType
+                });
+
                 // Post to JSONBin.io
+                console.log('🌐 Sending request to JSONBin.io...');
                 const response = await fetch('https://api.jsonbin.io/v3/b', {
                     method: 'POST',
                     headers: {
@@ -1909,15 +1918,27 @@
                     body: JSON.stringify(shareData)
                 });
 
+                console.log('📡 Response received:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
+                });
+
                 if (!response.ok) {
-                    throw new Error('Failed to generate link');
+                    const errorText = await response.text();
+                    console.error('❌ API Error Response:', errorText);
+                    throw new Error(`API returned ${response.status}: ${response.statusText}`);
                 }
 
                 const data = await response.json();
+                console.log('✅ Response data:', data);
+
                 const binId = data.metadata.id;
+                console.log('🔑 Bin ID:', binId);
 
                 // Generate share URL
                 const shareUrl = `${window.location.origin}/preview.html?id=${binId}`;
+                console.log('🔗 Share URL generated:', shareUrl);
 
                 // Display the link
                 document.getElementById('shareUrl').value = shareUrl;
@@ -1925,7 +1946,23 @@
                 linkContainer.style.display = 'block';
 
             } catch (error) {
-                console.error('Error generating share link:', error);
+                console.error('❌ Error generating share link:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    name: error.name,
+                    stack: error.stack
+                });
+
+                // Display detailed error message
+                const errorMessageEl = errorState.querySelector('p');
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    errorMessageEl.innerHTML = '⚠️ <strong>Network Error</strong><br>This might be a CORS issue when testing locally.<br><br><em>Tip: Deploy your site to test the share feature, or use a local server with CORS enabled.</em>';
+                } else if (error.message.includes('API returned')) {
+                    errorMessageEl.innerHTML = `⚠️ <strong>API Error</strong><br>${error.message}<br><br><em>Check the browser console for more details.</em>`;
+                } else {
+                    errorMessageEl.innerHTML = `⚠️ <strong>Error</strong><br>${error.message}<br><br><em>Check the browser console for more details.</em>`;
+                }
+
                 loadingState.style.display = 'none';
                 errorState.style.display = 'block';
             }
