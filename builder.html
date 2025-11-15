@@ -1582,18 +1582,21 @@
             sidebar.style.height = minHeight + 'px';
             sidebar.style.background = '#f8f9fa';
 
-            // Replace SVG icons with styled circles for PDF
+            // Keep SVG icons but force inline styles for PDF rendering
             const contactIcons = element.querySelectorAll('.contact-icon');
-            const originalIconHTML = [];
+            const originalIconStyles = [];
 
             contactIcons.forEach((icon, index) => {
-                originalIconHTML[index] = icon.innerHTML;
-                // Create a circle div with inline styles
-                const circle = document.createElement('div');
-                circle.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background: #667eea;';
+                originalIconStyles[index] = icon.style.cssText;
 
-                icon.innerHTML = '';
-                icon.appendChild(circle);
+                // Apply inline styles to icon container
+                icon.style.cssText = 'width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;';
+
+                // Apply inline styles to SVG
+                const svg = icon.querySelector('svg');
+                if (svg) {
+                    svg.style.cssText = 'width: 100%; height: 100%; stroke: #667eea; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: block;';
+                }
             });
 
             // Ensure skill boxes keep colors
@@ -1624,9 +1627,13 @@
                 sidebar.style.height = originalSidebarHeight;
                 sidebar.style.background = originalSidebarBg;
 
-                // Restore original icons
+                // Restore original icon styles
                 contactIcons.forEach((icon, index) => {
-                    icon.innerHTML = originalIconHTML[index];
+                    icon.style.cssText = originalIconStyles[index];
+                    const svg = icon.querySelector('svg');
+                    if (svg) {
+                        svg.style.cssText = '';
+                    }
                 });
 
                 // Restore skill boxes
