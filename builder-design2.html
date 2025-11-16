@@ -490,7 +490,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: -33px;
+            left: -31px;
             top: 6px;
             width: 14px;
             height: 14px;
@@ -1699,20 +1699,33 @@
                 title.style.borderBottomColor = currentTheme.color1;
             });
 
+            // Add CSS for PDF rendering of outer orange ring
+            const pdfStyle = document.createElement('style');
+            pdfStyle.id = 'pdf-dot-style';
+            pdfStyle.textContent = `
+                .timeline-dot::after {
+                    content: '';
+                    position: absolute;
+                    top: -5px;
+                    left: -5px;
+                    right: -5px;
+                    bottom: -5px;
+                    border: 2px solid ${currentTheme.color1};
+                    border-radius: 50%;
+                    pointer-events: none;
+                }
+            `;
+            document.head.appendChild(pdfStyle);
+
             const timelineDots = element.querySelectorAll('.timeline-dot');
             const originalDotColors = [];
             timelineDots.forEach((dot, index) => {
                 originalDotColors[index] = {
                     bg: dot.style.background,
-                    shadow: dot.style.boxShadow,
-                    outline: dot.style.outline,
-                    outlineOffset: dot.style.outlineOffset
+                    shadow: dot.style.boxShadow
                 };
                 dot.style.background = currentTheme.color1;
-                // Use both box-shadow and outline for better PDF rendering
                 dot.style.boxShadow = `0 0 0 2px ${currentTheme.color1}`;
-                dot.style.outline = `2px solid ${currentTheme.color1}`;
-                dot.style.outlineOffset = '3px';
             });
 
             const timelineLines = element.querySelectorAll('.timeline-line');
@@ -1766,8 +1779,6 @@
                 timelineDots.forEach((dot, index) => {
                     dot.style.background = originalDotColors[index].bg;
                     dot.style.boxShadow = originalDotColors[index].shadow;
-                    dot.style.outline = originalDotColors[index].outline;
-                    dot.style.outlineOffset = originalDotColors[index].outlineOffset;
                 });
 
                 timelineLines.forEach((line, index) => {
@@ -1777,6 +1788,12 @@
                 timelineCompanies.forEach((comp, index) => {
                     comp.style.color = originalCompanyColors[index];
                 });
+
+                // Remove PDF-specific style
+                const pdfStyleElement = document.getElementById('pdf-dot-style');
+                if (pdfStyleElement) {
+                    pdfStyleElement.remove();
+                }
             });
         }
 
