@@ -106,22 +106,74 @@
         }
 
         .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 24px;
+            text-decoration: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
+        .btn-primary:hover {
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-gradient {
+            background: white;
+            color: #667eea;
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gradient:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-medium) 0%, var(--text-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(95, 99, 104, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(95, 99, 104, 0.4);
+            transform: translateY(-2px);
         }
 
         /* Preview Container */
@@ -157,16 +209,6 @@
             justify-content: center;
             margin-bottom: 32px;
             flex-wrap: wrap;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--text-dark);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         /* Resume Preview Styles - Import from builder */
@@ -225,7 +267,7 @@
         </div>
         <h1 id="errorTitle">Resume Not Found</h1>
         <p id="errorMessage">This resume link may have expired or is invalid.</p>
-        <a href="index.html" class="btn">Create Your Own Resume</a>
+        <a href="index.html" class="btn btn-primary">Create Your Own Resume</a>
     </div>
 
     <!-- Preview Container -->
@@ -236,8 +278,8 @@
         </div>
 
         <div class="preview-actions">
-            <a href="index.html" class="btn btn-secondary">Create Your Own</a>
-            <button class="btn" onclick="downloadPDF()">Download PDF</button>
+            <a href="index.html" class="btn btn-outline-gradient">Create Your Own</a>
+            <button class="btn btn-outline-gradient" onclick="downloadPDF()">Download PDF</button>
         </div>
 
         <div id="resumePreview">
