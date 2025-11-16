@@ -459,13 +459,14 @@
                     .resume-subtitle { font-size: 1.125rem; opacity: 0.95; font-weight: 400; }
                     .resume-contact-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 24px 40px; background: #f8f9fa; border-bottom: 1px solid #e2e8f0; }
                     .contact-bar-item { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #4a5568; }
+                    .contact-bar-icon { width: 16px; height: 16px; font-size: 14px; display: flex; align-items: center; justify-content: center; }
                     .resume-main-content { padding: 40px; }
                     .resume-section { margin-bottom: 40px; }
                     .section-title { font-size: 1.25rem; font-weight: 700; color: #2d3748; margin-bottom: 24px; padding-bottom: 8px; border-bottom: 2px solid ${theme.color1}; }
                     .timeline-item { position: relative; padding-left: 32px; margin-bottom: 32px; }
                     .timeline-item::before { content: ''; position: absolute; left: 6px; top: 8px; bottom: -24px; width: 2px; background: linear-gradient(to bottom, ${theme.color1}, ${theme.color2}); }
                     .timeline-item:last-child::before { display: none; }
-                    .timeline-dot { position: absolute; left: 0; top: 8px; width: 14px; height: 14px; background: ${theme.color1}; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 0 2px ${theme.color1}; }
+                    .timeline-dot { position: absolute; left: -6px; top: 8px; width: 14px; height: 14px; background: ${theme.color1}; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 0 2px ${theme.color1}; }
                     .timeline-header { margin-bottom: 8px; }
                     .timeline-title { font-size: 1.125rem; font-weight: 600; color: #2d3748; margin-bottom: 4px; }
                     .timeline-company { font-size: 1rem; color: ${theme.color1}; font-weight: 500; margin-bottom: 4px; }
@@ -744,10 +745,10 @@
                     </div>
 
                     <div class="resume-contact-bar">
-                        ${resumeData.email ? `<div class="contact-bar-item">${resumeData.email}</div>` : ''}
-                        ${resumeData.phone ? `<div class="contact-bar-item">${resumeData.phone}</div>` : ''}
-                        ${resumeData.address ? `<div class="contact-bar-item">${resumeData.address}</div>` : ''}
-                        ${resumeData.website ? `<div class="contact-bar-item">${resumeData.website}</div>` : ''}
+                        ${resumeData.email ? `<div class="contact-bar-item"><div class="contact-bar-icon">📧</div>${resumeData.email}</div>` : ''}
+                        ${resumeData.phone ? `<div class="contact-bar-item"><div class="contact-bar-icon">📱</div>${resumeData.phone}</div>` : ''}
+                        ${resumeData.address ? `<div class="contact-bar-item"><div class="contact-bar-icon">📍</div>${resumeData.address}</div>` : ''}
+                        ${resumeData.website ? `<div class="contact-bar-item"><div class="contact-bar-icon">🌐</div>${resumeData.website}</div>` : ''}
                     </div>
 
                     <div class="resume-main-content">

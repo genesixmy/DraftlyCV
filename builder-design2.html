@@ -490,7 +490,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: -27px;
+            left: -25px;
             top: 6px;
             width: 14px;
             height: 14px;
@@ -1733,7 +1733,10 @@
                     scale: 2,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#ffffff',
+                    allowTaint: true,
+                    foreignObjectRendering: false,
+                    removeContainer: true
                 },
                 jsPDF: {
                     unit: 'mm',
