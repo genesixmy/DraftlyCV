@@ -1200,6 +1200,7 @@
 
     <!-- Include html2pdf.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 
     <script>
         // ===================================
@@ -2063,21 +2064,44 @@
                     createdAt: new Date().toISOString()
                 };
 
-                console.log('📦 Data prepared:', {
+                // Calculate uncompressed size
+                const uncompressedJson = JSON.stringify(shareData);
+                const uncompressedSize = new Blob([uncompressedJson]).size;
+                console.log(`📦 Data prepared (uncompressed: ${(uncompressedSize / 1024).toFixed(2)} KB)`, {
                     hasName: !!resumeData.name,
                     hasEmail: !!resumeData.email,
                     designType: shareData.designType
                 });
 
+                // Compress the data using LZ-String
+                console.log('🗜️ Compressing data...');
+                const compressedData = LZString.compressToBase64(uncompressedJson);
+                const compressedPayload = {
+                    compressed: true,
+                    data: compressedData,
+                    version: 1
+                };
+
+                const compressedJson = JSON.stringify(compressedPayload);
+                const compressedSize = new Blob([compressedJson]).size;
+                const compressionRatio = ((1 - compressedSize / uncompressedSize) * 100).toFixed(1);
+
+                console.log(`✅ Compression complete: ${(compressedSize / 1024).toFixed(2)} KB (${compressionRatio}% reduction)`);
+
+                // Check if still too large for free tier
+                if (compressedSize > 100 * 1024) {
+                    throw new Error(`Data too large (${(compressedSize / 1024).toFixed(2)} KB). Even after compression, the data exceeds JSONBin.io's 100 KB free tier limit. Consider removing the photo or upgrading to a Pro plan.`);
+                }
+
                 // Post to JSONBin.io
-                console.log('🌐 Sending request to JSONBin.io...');
+                console.log('🌐 Sending compressed request to JSONBin.io...');
                 const response = await fetch('https://api.jsonbin.io/v3/b', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Master-Key': JSONBIN_API_KEY
                     },
-                    body: JSON.stringify(shareData)
+                    body: compressedJson
                 });
 
                 console.log('📡 Response received:', {
@@ -2089,7 +2113,19 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('❌ API Error Response:', errorText);
-                    throw new Error(`API returned ${response.status}: ${response.statusText}`);
+
+                    // Try to parse error message from JSONBin
+                    let errorMessage = `API returned ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        if (errorJson.message) {
+                            errorMessage = errorJson.message;
+                        }
+                    } catch (e) {
+                        // If parsing fails, use the default message
+                    }
+
+                    throw new Error(errorMessage);
                 }
 
                 const data = await response.json();
@@ -2119,6 +2155,10 @@
                 const errorMessageEl = errorState.querySelector('p');
                 if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
                     errorMessageEl.innerHTML = '⚠️ <strong>Network Error</strong><br>This might be a CORS issue when testing locally.<br><br><em>Tip: Deploy your site to test the share feature, or use a local server with CORS enabled.</em>';
+                } else if (error.message.includes('Data too large') || error.message.includes('100kb') || error.message.includes('100 KB')) {
+                    errorMessageEl.innerHTML = `⚠️ <strong>Data Size Limit Exceeded</strong><br>${error.message}<br><br><em>Try removing your photo or reducing the amount of content.</em>`;
+                } else if (error.message.includes('cannot create a record over 100kb') || error.message.includes('Upgrade to Pro')) {
+                    errorMessageEl.innerHTML = '⚠️ <strong>Data Size Limit</strong><br>Your resume data is too large for the free tier (100 KB limit).<br><br><em>Try removing your photo to reduce the size, or consider upgrading to JSONBin.io Pro.</em>';
                 } else if (error.message.includes('API returned')) {
                     errorMessageEl.innerHTML = `⚠️ <strong>API Error</strong><br>${error.message}<br><br><em>Check the browser console for more details.</em>`;
                 } else {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Preview | DraftlyCV</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -300,14 +301,35 @@
 
                 const data = await response.json();
 
+                // Handle compressed data
+                let recordData;
+                if (data.record.compressed && data.record.data) {
+                    // New compressed format
+                    console.log('🗜️ Decompressing data...');
+                    try {
+                        const decompressedJson = LZString.decompressFromBase64(data.record.data);
+                        if (!decompressedJson) {
+                            throw new Error('Decompression failed');
+                        }
+                        recordData = JSON.parse(decompressedJson);
+                        console.log('✅ Data decompressed successfully');
+                    } catch (error) {
+                        console.error('Error decompressing data:', error);
+                        throw new Error('Failed to decompress resume data');
+                    }
+                } else {
+                    // Legacy uncompressed format (backwards compatibility)
+                    recordData = data.record;
+                }
+
                 // Check expiry
-                if (data.record.createdAt && isExpired(data.record.createdAt)) {
+                if (recordData.createdAt && isExpired(recordData.createdAt)) {
                     showError('Link Expired', 'This resume link has expired. Links are valid for 15 days.');
                     return;
                 }
 
-                resumeData = data.record.resumeData;
-                designType = data.record.designType || 'design1';
+                resumeData = recordData.resumeData;
+                designType = recordData.designType || 'design1';
 
                 // Load appropriate styles and render
                 await loadDesignStyles(designType);
