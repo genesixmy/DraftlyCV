@@ -14,8 +14,8 @@
         }
 
         :root {
-            --primary-color: #4facfe;
-            --primary-dark: #00f2fe;
+            --primary-color: #FF5722;
+            --primary-dark: #FF6E40;
             --text-dark: #2d3748;
             --text-medium: #4a5568;
             --text-light: #718096;
@@ -363,7 +363,7 @@
         .theme-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .theme-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .theme-green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .theme-orange { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .theme-orange { background: linear-gradient(135deg, #FF5722 0%, #FF6E40 100%); }
         .theme-red { background: linear-gradient(135deg, #f83600 0%, #f9d423 100%); }
 
         /* Resume Preview - Modern Timeline Design */
@@ -452,7 +452,7 @@
             color: var(--text-dark);
             margin-bottom: 20px;
             padding-bottom: 8px;
-            border-bottom: 3px solid #4facfe;
+            border-bottom: 3px solid #FF5722;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -475,7 +475,7 @@
             top: 8px;
             bottom: 8px;
             width: 3px;
-            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+            background: linear-gradient(to bottom, #FF5722, #FF6E40);
         }
 
         .timeline-item {
@@ -494,10 +494,10 @@
             top: 6px;
             width: 14px;
             height: 14px;
-            background: #4facfe;
+            background: #FF5722;
             border-radius: 50%;
             border: 3px solid white;
-            box-shadow: 0 0 0 2px #4facfe;
+            box-shadow: 0 0 0 2px #FF5722;
         }
 
         .timeline-title {
@@ -509,7 +509,7 @@
 
         .timeline-company {
             font-weight: 500;
-            color: #4facfe;
+            color: #FF5722;
             font-size: 0.9375rem;
             margin-bottom: 4px;
         }
@@ -561,8 +561,8 @@
         }
 
         .skill-box.filled {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            border-color: #4facfe;
+            background: linear-gradient(135deg, #FF5722 0%, #FF6E40 100%);
+            border-color: #FF5722;
         }
 
         /* Mobile Styles */
@@ -914,9 +914,9 @@
                 <div class="theme-selector-title">Choose Theme Color</div>
                 <div class="theme-colors">
                     <div class="theme-color theme-purple" onclick="changeTheme('purple', '#667eea', '#764ba2')" title="Purple"></div>
-                    <div class="theme-color theme-blue active" onclick="changeTheme('blue', '#4facfe', '#00f2fe')" title="Blue"></div>
+                    <div class="theme-color theme-blue" onclick="changeTheme('blue', '#4facfe', '#00f2fe')" title="Blue"></div>
                     <div class="theme-color theme-green" onclick="changeTheme('green', '#43e97b', '#38f9d7')" title="Green"></div>
-                    <div class="theme-color theme-orange" onclick="changeTheme('orange', '#11998e', '#38ef7d')" title="Teal"></div>
+                    <div class="theme-color theme-orange active" onclick="changeTheme('orange', '#FF5722', '#FF6E40')" title="Orange"></div>
                     <div class="theme-color theme-red" onclick="changeTheme('red', '#f83600', '#f9d423')" title="Red"></div>
                 </div>
             </div>
@@ -1117,9 +1117,9 @@
         };
 
         let currentTheme = {
-            name: 'blue',
-            color1: '#4facfe',
-            color2: '#00f2fe'
+            name: 'orange',
+            color1: '#FF5722',
+            color2: '#FF6E40'
         };
 
         // LocalStorage Functions
