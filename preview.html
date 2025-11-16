@@ -400,6 +400,12 @@
                     .item-company { font-size: 0.875rem; color: #5f6368; margin-bottom: 4px; }
                     .item-duration { font-size: 0.8125rem; color: #718096; margin-bottom: 8px; }
                     .item-description { font-size: 0.8125rem; color: #5f6368; line-height: 1.6; }
+
+                    /* List styling for formatted text */
+                    .item-description ul, .item-description ol, .resume-summary ul, .resume-summary ol { margin: 8px 0; padding-left: 20px; }
+                    .item-description li, .resume-summary li { margin-bottom: 4px; line-height: 1.6; }
+                    .item-description strong, .resume-summary strong { font-weight: 600; color: #202124; }
+                    .item-description em, .resume-summary em { font-style: italic; }
                 `;
             } else {
                 // Design 2 styles (timeline layout) - use dynamic theme colors
@@ -428,6 +434,12 @@
                     .skill-name { font-size: 0.9375rem; font-weight: 500; color: #2d3748; margin-bottom: 6px; }
                     .skill-bar-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
                     .skill-bar-fill { height: 100%; background: ${theme.color1}; border-radius: 4px; }
+
+                    /* List styling for formatted text */
+                    .timeline-description ul, .timeline-description ol, .resume-section p ul, .resume-section p ol { margin: 8px 0; padding-left: 20px; }
+                    .timeline-description li, .resume-section li { margin-bottom: 4px; line-height: 1.6; }
+                    .timeline-description strong, .resume-section strong { font-weight: 600; color: #2d3748; }
+                    .timeline-description em, .resume-section em { font-style: italic; }
                 `;
             }
 
@@ -445,13 +457,87 @@
             }
         }
 
+        // Format text with markdown-like syntax for bold, italic, and lists
+        function formatText(text) {
+            if (!text) return '';
+
+            // Split into lines for processing
+            let lines = text.split('\n');
+            let result = [];
+            let inList = false;
+            let listType = null;
+            let listItems = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                // Check for bullet list (- item or * item)
+                if (line.match(/^[-*]\s+(.+)/)) {
+                    if (!inList || listType !== 'ul') {
+                        if (inList) {
+                            result.push(`<${listType}>${listItems.join('')}</${listType}>`);
+                            listItems = [];
+                        }
+                        inList = true;
+                        listType = 'ul';
+                    }
+                    const itemText = line.replace(/^[-*]\s+/, '');
+                    listItems.push(`<li>${formatInline(itemText)}</li>`);
+                }
+                // Check for numbered list (1. item or 1) item)
+                else if (line.match(/^\d+[.)]\s+(.+)/)) {
+                    if (!inList || listType !== 'ol') {
+                        if (inList) {
+                            result.push(`<${listType}>${listItems.join('')}</${listType}>`);
+                            listItems = [];
+                        }
+                        inList = true;
+                        listType = 'ol';
+                    }
+                    const itemText = line.replace(/^\d+[.)]\s+/, '');
+                    listItems.push(`<li>${formatInline(itemText)}</li>`);
+                }
+                // Regular line
+                else {
+                    if (inList) {
+                        result.push(`<${listType}>${listItems.join('')}</${listType}>`);
+                        listItems = [];
+                        inList = false;
+                        listType = null;
+                    }
+                    if (line) {
+                        result.push(formatInline(line));
+                    } else {
+                        result.push('<br>');
+                    }
+                }
+            }
+
+            // Close any remaining list
+            if (inList && listItems.length > 0) {
+                result.push(`<${listType}>${listItems.join('')}</${listType}>`);
+            }
+
+            return result.join('');
+        }
+
+        // Format inline markdown (bold, italic)
+        function formatInline(text) {
+            if (!text) return '';
+
+            // Bold: **text** or __text__
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
+
+            // Italic: *text* or _text_ (but not if it's part of **)
+            text = text.replace(/(?<!\*)\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>');
+            text = text.replace(/(?<!_)_(?!_)(.+?)_(?!_)/g, '<em>$1</em>');
+
+            return text;
+        }
+
         // Render Design 1 (Sidebar)
         function renderDesign1() {
-            // Helper function to convert line breaks to <br> tags
-            const nl2br = (str) => {
-                if (!str) return '';
-                return str.replace(/\n/g, '<br>');
-            };
 
             return `
                 <div class="resume-content">
@@ -543,7 +629,7 @@
                         ${resumeData.summary ? `
                             <div class="resume-summary">
                                 <div class="resume-section-title">Summary</div>
-                                <p>${nl2br(resumeData.summary)}</p>
+                                <p>${formatText(resumeData.summary)}</p>
                             </div>
                         ` : ''}
 
@@ -565,7 +651,7 @@
                                             <div class="item-title">${exp.title || ''}</div>
                                             <div class="item-company">${exp.company || ''}</div>
                                             ${duration ? `<div class="item-duration">${duration}</div>` : ''}
-                                            ${exp.description ? `<div class="item-description">${nl2br(exp.description)}</div>` : ''}
+                                            ${exp.description ? `<div class="item-description">${formatText(exp.description)}</div>` : ''}
                                         </div>
                                     `;
                                 }).join('')}
@@ -593,7 +679,7 @@
                                             <div class="item-title">${edu.degree || ''}</div>
                                             <div class="item-company">${school}</div>
                                             ${duration ? `<div class="item-duration">${duration}</div>` : ''}
-                                            ${edu.description ? `<div class="item-description">${nl2br(edu.description)}</div>` : ''}
+                                            ${edu.description ? `<div class="item-description">${formatText(edu.description)}</div>` : ''}
                                         </div>
                                     `;
                                 }).join('')}
@@ -606,11 +692,6 @@
 
         // Render Design 2 (Timeline)
         function renderDesign2() {
-            // Helper function to convert line breaks to <br> tags
-            const nl2br = (str) => {
-                if (!str) return '';
-                return str.replace(/\n/g, '<br>');
-            };
 
             return `
                 <div class="resume-content">
@@ -630,7 +711,7 @@
                         ${resumeData.summary ? `
                             <div class="resume-section">
                                 <div class="section-title">Summary</div>
-                                <p style="line-height: 1.6; color: #4a5568;">${nl2br(resumeData.summary)}</p>
+                                <p style="line-height: 1.6; color: #4a5568;">${formatText(resumeData.summary)}</p>
                             </div>
                         ` : ''}
 
@@ -654,7 +735,7 @@
                                                 <div class="timeline-company">${exp.company || ''}</div>
                                                 ${duration ? `<div class="timeline-duration">${duration}</div>` : ''}
                                             </div>
-                                            ${exp.description ? `<div class="timeline-description">${nl2br(exp.description)}</div>` : ''}
+                                            ${exp.description ? `<div class="timeline-description">${formatText(exp.description)}</div>` : ''}
                                         </div>
                                     `;
                                 }).join('')}
@@ -684,7 +765,7 @@
                                                 <div class="timeline-company">${school}</div>
                                                 ${duration ? `<div class="timeline-duration">${duration}</div>` : ''}
                                             </div>
-                                            ${edu.description ? `<div class="timeline-description">${nl2br(edu.description)}</div>` : ''}
+                                            ${edu.description ? `<div class="timeline-description">${formatText(edu.description)}</div>` : ''}
                                         </div>
                                     `;
                                 }).join('')}
@@ -728,7 +809,7 @@
                                                 <div class="timeline-company">${cert.issuer || ''}</div>
                                                 ${certDate ? `<div class="timeline-duration">${certDate}</div>` : ''}
                                             </div>
-                                            ${cert.description ? `<div class="timeline-description">${nl2br(cert.description)}</div>` : ''}
+                                            ${cert.description ? `<div class="timeline-description">${formatText(cert.description)}</div>` : ''}
                                         </div>
                                     `;
                                 }).join('')}
