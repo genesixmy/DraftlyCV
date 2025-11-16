@@ -1707,7 +1707,8 @@
                     shadow: dot.style.boxShadow
                 };
                 dot.style.background = currentTheme.color1;
-                dot.style.boxShadow = `0 0 0 2px ${currentTheme.color1}`;
+                // Use box-shadow to create both white border and orange outer ring for PDF
+                dot.style.boxShadow = `0 0 0 3px white, 0 0 0 5px ${currentTheme.color1}`;
             });
 
             const timelineLines = element.querySelectorAll('.timeline-line');
