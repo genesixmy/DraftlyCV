@@ -490,7 +490,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: -25px;
+            left: -33px;
             top: 6px;
             width: 14px;
             height: 14px;
@@ -1704,11 +1704,15 @@
             timelineDots.forEach((dot, index) => {
                 originalDotColors[index] = {
                     bg: dot.style.background,
-                    shadow: dot.style.boxShadow
+                    shadow: dot.style.boxShadow,
+                    outline: dot.style.outline,
+                    outlineOffset: dot.style.outlineOffset
                 };
                 dot.style.background = currentTheme.color1;
-                // Use box-shadow to create both white border and orange outer ring for PDF
-                dot.style.boxShadow = `0 0 0 3px white, 0 0 0 5px ${currentTheme.color1}`;
+                // Use both box-shadow and outline for better PDF rendering
+                dot.style.boxShadow = `0 0 0 2px ${currentTheme.color1}`;
+                dot.style.outline = `2px solid ${currentTheme.color1}`;
+                dot.style.outlineOffset = '3px';
             });
 
             const timelineLines = element.querySelectorAll('.timeline-line');
@@ -1762,6 +1766,8 @@
                 timelineDots.forEach((dot, index) => {
                     dot.style.background = originalDotColors[index].bg;
                     dot.style.boxShadow = originalDotColors[index].shadow;
+                    dot.style.outline = originalDotColors[index].outline;
+                    dot.style.outlineOffset = originalDotColors[index].outlineOffset;
                 });
 
                 timelineLines.forEach((line, index) => {
