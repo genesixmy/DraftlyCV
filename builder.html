@@ -1220,6 +1220,19 @@
         const JSONBIN_API_KEY = 'YOUR_JSONBIN_API_KEY_HERE'; // Replace with your actual key
 
         // ===================================
+        // SHARE LINK BASE URL CONFIGURATION
+        // ===================================
+        // IMPORTANT: Set your deployed website URL here for share links to work
+        // Examples:
+        //   - GitHub Pages: 'https://username.github.io/DraftlyCV'
+        //   - Netlify: 'https://your-site.netlify.app'
+        //   - Custom domain: 'https://your-domain.com'
+        //   - Local testing: 'http://localhost:8000' or 'http://127.0.0.1:8000'
+        //
+        // Leave as empty string '' to auto-detect (only works when served via HTTP/HTTPS)
+        const SHARE_BASE_URL = ''; // Replace with your deployed URL
+
+        // ===================================
 
         // Resume data structure
         let resumeData = {
@@ -2121,6 +2134,7 @@
                 const shareData = {
                     resumeData: optimizedResumeData,
                     designType: 'design1',
+                    theme: currentTheme,  // Save theme colors for preview
                     createdAt: new Date().toISOString()
                 };
 
@@ -2195,7 +2209,21 @@
                 console.log('🔑 Bin ID:', binId);
 
                 // Generate share URL
-                const shareUrl = `${window.location.origin}/preview.html?id=${binId}`;
+                let baseUrl = SHARE_BASE_URL;
+
+                // Auto-detect if base URL not configured
+                if (!baseUrl || baseUrl === '') {
+                    // Check if running locally via file://
+                    if (window.location.protocol === 'file:') {
+                        throw new Error('Cannot generate share link: You are opening the file directly from your file system (file://). \n\nTo fix this, either:\n1. Deploy your site (GitHub Pages, Netlify, etc.) and set SHARE_BASE_URL in the code\n2. Run a local web server (see instructions below)\n\n💡 Quick local server:\n   - Python 3: python -m http.server 8000\n   - PHP: php -S localhost:8000\n   - Node.js: npx http-server\n\nThen open: http://localhost:8000/builder.html');
+                    }
+                    baseUrl = window.location.origin;
+                }
+
+                // Remove trailing slash from base URL
+                baseUrl = baseUrl.replace(/\/$/, '');
+
+                const shareUrl = `${baseUrl}/preview.html?id=${binId}`;
                 console.log('🔗 Share URL generated:', shareUrl);
 
                 // Display the link
@@ -2213,7 +2241,9 @@
 
                 // Display detailed error message
                 const errorMessageEl = errorState.querySelector('p');
-                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                if (error.message.includes('file directly from your file system') || error.message.includes('file://')) {
+                    errorMessageEl.innerHTML = '⚠️ <strong>Local File Access Issue</strong><br>You are opening this file directly (file://).<br><br><strong>Quick Fix:</strong><br>1. Run a local web server:<br>&nbsp;&nbsp;&nbsp;<code>python -m http.server 8000</code><br>2. Open: <code>http://localhost:8000/builder.html</code><br><br><em>Or deploy to GitHub Pages/Netlify and configure SHARE_BASE_URL in the code.</em>';
+                } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
                     errorMessageEl.innerHTML = '⚠️ <strong>Network Error</strong><br>This might be a CORS issue when testing locally.<br><br><em>Tip: Deploy your site to test the share feature, or use a local server with CORS enabled.</em>';
                 } else if (error.message.includes('Data still too large') || error.message.includes('Data too large') || error.message.includes('100kb') || error.message.includes('100 KB')) {
                     errorMessageEl.innerHTML = `⚠️ <strong>Data Size Limit Exceeded</strong><br>Your resume is too large even after automatic photo compression.<br><br><em>Options: Remove your photo entirely, reduce text content, or upgrade to JSONBin.io Pro (supports up to 1MB).</em>`;
