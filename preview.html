@@ -516,13 +516,18 @@
                         ${resumeData.certificates && resumeData.certificates.length > 0 ? `
                             <div class="resume-section">
                                 <div class="resume-section-title">Certificates</div>
-                                ${resumeData.certificates.map(cert => `
-                                    <div class="certificate-item">
-                                        <div class="cert-name">${cert.name}</div>
-                                        <div class="cert-issuer">${cert.issuer}</div>
-                                        ${cert.year ? `<div class="cert-year">${cert.year}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                ${resumeData.certificates.map(cert => {
+                                    // Use date (new) or year (old) field
+                                    const certDate = cert.date || cert.year || '';
+
+                                    return `
+                                        <div class="certificate-item">
+                                            <div class="cert-name">${cert.name || ''}</div>
+                                            <div class="cert-issuer">${cert.issuer || ''}</div>
+                                            ${certDate ? `<div class="cert-year">${certDate}</div>` : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
                     </div>
@@ -545,28 +550,53 @@
                         ${resumeData.experience && resumeData.experience.length > 0 ? `
                             <div class="resume-section">
                                 <div class="resume-section-title">Experience</div>
-                                ${resumeData.experience.map(exp => `
-                                    <div class="experience-item">
-                                        <div class="item-title">${exp.title}</div>
-                                        <div class="item-company">${exp.company}</div>
-                                        <div class="item-duration">${exp.duration}</div>
-                                        ${exp.description ? `<div class="item-description">${nl2br(exp.description)}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                ${resumeData.experience.map(exp => {
+                                    // Format date range
+                                    let duration = '';
+                                    if (exp.startDate || exp.endDate) {
+                                        duration = `${exp.startDate || ''} - ${exp.endDate || ''}`;
+                                    } else if (exp.duration) {
+                                        // Backwards compatibility with old data
+                                        duration = exp.duration;
+                                    }
+
+                                    return `
+                                        <div class="experience-item">
+                                            <div class="item-title">${exp.title || ''}</div>
+                                            <div class="item-company">${exp.company || ''}</div>
+                                            ${duration ? `<div class="item-duration">${duration}</div>` : ''}
+                                            ${exp.description ? `<div class="item-description">${nl2br(exp.description)}</div>` : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
 
                         ${resumeData.education && resumeData.education.length > 0 ? `
                             <div class="resume-section">
                                 <div class="resume-section-title">Education</div>
-                                ${resumeData.education.map(edu => `
-                                    <div class="education-item">
-                                        <div class="item-title">${edu.degree}</div>
-                                        <div class="item-company">${edu.school}</div>
-                                        <div class="item-duration">${edu.year}</div>
-                                        ${edu.description ? `<div class="item-description">${nl2br(edu.description)}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                ${resumeData.education.map(edu => {
+                                    // Format date range
+                                    let duration = '';
+                                    if (edu.startDate || edu.endDate) {
+                                        duration = `${edu.startDate || ''} - ${edu.endDate || ''}`;
+                                    } else if (edu.year) {
+                                        // Backwards compatibility with old data
+                                        duration = edu.year;
+                                    }
+
+                                    // Use institution (new) or school (old) field
+                                    const school = edu.institution || edu.school || '';
+
+                                    return `
+                                        <div class="education-item">
+                                            <div class="item-title">${edu.degree || ''}</div>
+                                            <div class="item-company">${school}</div>
+                                            ${duration ? `<div class="item-duration">${duration}</div>` : ''}
+                                            ${edu.description ? `<div class="item-description">${nl2br(edu.description)}</div>` : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
                     </div>
@@ -607,34 +637,57 @@
                         ${resumeData.experience && resumeData.experience.length > 0 ? `
                             <div class="resume-section">
                                 <div class="section-title">Experience</div>
-                                ${resumeData.experience.map(exp => `
-                                    <div class="timeline-item">
-                                        <div class="timeline-dot"></div>
-                                        <div class="timeline-header">
-                                            <div class="timeline-title">${exp.title}</div>
-                                            <div class="timeline-company">${exp.company}</div>
-                                            <div class="timeline-duration">${exp.duration}</div>
+                                ${resumeData.experience.map(exp => {
+                                    // Format date range
+                                    let duration = '';
+                                    if (exp.startDate || exp.endDate) {
+                                        duration = `${exp.startDate || ''} - ${exp.endDate || ''}`;
+                                    } else if (exp.duration) {
+                                        duration = exp.duration;
+                                    }
+
+                                    return `
+                                        <div class="timeline-item">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-header">
+                                                <div class="timeline-title">${exp.title || ''}</div>
+                                                <div class="timeline-company">${exp.company || ''}</div>
+                                                ${duration ? `<div class="timeline-duration">${duration}</div>` : ''}
+                                            </div>
+                                            ${exp.description ? `<div class="timeline-description">${nl2br(exp.description)}</div>` : ''}
                                         </div>
-                                        ${exp.description ? `<div class="timeline-description">${nl2br(exp.description)}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
 
                         ${resumeData.education && resumeData.education.length > 0 ? `
                             <div class="resume-section">
                                 <div class="section-title">Education</div>
-                                ${resumeData.education.map(edu => `
-                                    <div class="timeline-item">
-                                        <div class="timeline-dot"></div>
-                                        <div class="timeline-header">
-                                            <div class="timeline-title">${edu.degree}</div>
-                                            <div class="timeline-company">${edu.school}</div>
-                                            <div class="timeline-duration">${edu.year}</div>
+                                ${resumeData.education.map(edu => {
+                                    // Format date range
+                                    let duration = '';
+                                    if (edu.startDate || edu.endDate) {
+                                        duration = `${edu.startDate || ''} - ${edu.endDate || ''}`;
+                                    } else if (edu.year) {
+                                        duration = edu.year;
+                                    }
+
+                                    // Use institution (new) or school (old) field
+                                    const school = edu.institution || edu.school || '';
+
+                                    return `
+                                        <div class="timeline-item">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-header">
+                                                <div class="timeline-title">${edu.degree || ''}</div>
+                                                <div class="timeline-company">${school}</div>
+                                                ${duration ? `<div class="timeline-duration">${duration}</div>` : ''}
+                                            </div>
+                                            ${edu.description ? `<div class="timeline-description">${nl2br(edu.description)}</div>` : ''}
                                         </div>
-                                        ${edu.description ? `<div class="timeline-description">${nl2br(edu.description)}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
 
@@ -642,14 +695,20 @@
                             <div class="resume-section">
                                 <div class="section-title">Skills</div>
                                 <div class="skills-grid">
-                                    ${resumeData.skills.map(skill => `
-                                        <div class="skill-item">
-                                            <div class="skill-name">${skill.name}</div>
-                                            <div class="skill-bar-bg">
-                                                <div class="skill-bar-fill" style="width: ${skill.level}%"></div>
+                                    ${resumeData.skills.map(skill => {
+                                        const level = skill.level || 0;
+                                        // Convert percentage to 1-5 rating if needed
+                                        const rating = level > 5 ? Math.ceil(level / 20) : level;
+
+                                        return `
+                                            <div class="skill-item">
+                                                <div class="skill-name">${skill.name || ''}</div>
+                                                <div class="skill-bar-bg">
+                                                    <div class="skill-bar-fill" style="width: ${rating * 20}%"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `).join('')}
+                                        `;
+                                    }).join('')}
                                 </div>
                             </div>
                         ` : ''}
@@ -657,17 +716,22 @@
                         ${resumeData.certificates && resumeData.certificates.length > 0 ? `
                             <div class="resume-section">
                                 <div class="section-title">Certificates</div>
-                                ${resumeData.certificates.map(cert => `
-                                    <div class="timeline-item">
-                                        <div class="timeline-dot"></div>
-                                        <div class="timeline-header">
-                                            <div class="timeline-title">${cert.name}</div>
-                                            <div class="timeline-company">${cert.issuer}</div>
-                                            ${cert.year ? `<div class="timeline-duration">${cert.year}</div>` : ''}
+                                ${resumeData.certificates.map(cert => {
+                                    // Use date (new) or year (old) field
+                                    const certDate = cert.date || cert.year || '';
+
+                                    return `
+                                        <div class="timeline-item">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-header">
+                                                <div class="timeline-title">${cert.name || ''}</div>
+                                                <div class="timeline-company">${cert.issuer || ''}</div>
+                                                ${certDate ? `<div class="timeline-duration">${certDate}</div>` : ''}
+                                            </div>
+                                            ${cert.description ? `<div class="timeline-description">${nl2br(cert.description)}</div>` : ''}
                                         </div>
-                                        ${cert.description ? `<div class="timeline-description">${nl2br(cert.description)}</div>` : ''}
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         ` : ''}
                     </div>
