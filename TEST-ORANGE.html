@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORANGE THEME TEST - Design 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .color-sample {
+            width: 200px;
+            height: 100px;
+            margin: 10px;
+            display: inline-block;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            line-height: 60px;
+        }
+        .orange-new {
+            background: linear-gradient(135deg, #FF5722 0%, #FF6E40 100%);
+        }
+        .blue-old {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .section-title-test {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #FF5722;
+            text-transform: uppercase;
+        }
+        .timeline-dot-test {
+            width: 14px;
+            height: 14px;
+            background: #FF5722;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #FF5722;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .skill-box-test {
+            display: inline-block;
+            width: 32px;
+            height: 8px;
+            background: linear-gradient(135deg, #FF5722 0%, #FF6E40 100%);
+            border-radius: 4px;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>🎨 DESIGN 2 THEME TEST</h1>
+        <p><strong>Jika update berjaya, anda akan nampak ORANGE di bawah (bukan BLUE)</strong></p>
+    </div>
+
+    <div class="test-box">
+        <h2>Color Comparison:</h2>
+        <div class="color-sample orange-new">
+            ✅ ORANGE<br>(NEW THEME)<br>#FF5722
+        </div>
+        <div class="color-sample blue-old">
+            ❌ BLUE<br>(OLD THEME)<br>#4facfe
+        </div>
+    </div>
+
+    <div class="test-box">
+        <h2>Section Title Test:</h2>
+        <div class="section-title-test">EDUCATION</div>
+        <p>☝️ Underline patut ORANGE, bukan blue</p>
+    </div>
+
+    <div class="test-box">
+        <h2>Timeline Dot Test:</h2>
+        <div class="timeline-dot-test"></div>
+        <span>Timeline dot patut ORANGE</span>
+    </div>
+
+    <div class="test-box">
+        <h2>Skills Box Test:</h2>
+        <div>
+            <div class="skill-box-test"></div>
+            <div class="skill-box-test"></div>
+            <div class="skill-box-test"></div>
+            <div class="skill-box-test"></div>
+            <div class="skill-box-test"></div>
+        </div>
+        <p>☝️ Skills boxes patut ORANGE</p>
+    </div>
+
+    <div class="test-box">
+        <h2>✅ Jika SEMUA di atas ORANGE:</h2>
+        <p>Update berjaya! Proceed ke builder-design2.html dan clear localStorage:</p>
+        <pre style="background: #f0f0f0; padding: 15px; border-radius: 5px;">
+localStorage.removeItem('draftlycv_theme_design2');
+localStorage.removeItem('draftlycv_resume_design2');
+location.reload();
+        </pre>
+        <button onclick="clearStorage()" style="padding: 10px 20px; background: #FF5722; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+            Clear localStorage & Reload
+        </button>
+    </div>
+
+    <div class="test-box">
+        <h2>❌ Jika masih nampak BLUE:</h2>
+        <p>ZIP file yang download mungkin bukan dari branch yang betul.</p>
+        <p><strong>Branch yang betul:</strong> claude/resume-builder-design-01CXRQDvTcjn4ppP48vxDphR</p>
+    </div>
+
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            alert('LocalStorage cleared! Page will reload.');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
