@@ -494,28 +494,52 @@
                 print-color-adjust: exact;
             }
 
-            /* Prevent page breaks inside items */
+            /* CRITICAL: Prevent page breaks inside items - MAXIMUM STRENGTH */
             .resume-item,
             .experience-item,
             .education-item,
             .certificate-item,
             .skill-item {
-                page-break-inside: avoid;
-                break-inside: avoid;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                -webkit-column-break-inside: avoid !important;
+                display: block !important;
+                position: relative !important;
             }
 
             /* Keep section titles with their content */
             .resume-section-title {
-                page-break-after: avoid;
-                break-after: avoid;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Keep item headers with their descriptions */
+            .resume-item-header,
+            .item-header {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
             }
 
             /* Prevent orphaned lines */
             .item-description,
+            .resume-item-description,
             .resume-summary p,
             .timeline-description {
                 orphans: 3;
                 widows: 3;
+                page-break-inside: avoid;
+            }
+
+            /* Prevent resume section from breaking */
+            .resume-section {
+                page-break-inside: auto;
+            }
+
+            /* Keep photo and header together */
+            .resume-header {
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
             }
         }
 
@@ -1992,6 +2016,27 @@
             sidebar.style.height = minHeight + 'px';
             sidebar.style.background = '#f8f9fa';
 
+            // CRITICAL: Add inline page-break styles to ensure they're respected
+            const allItems = element.querySelectorAll('.resume-item, .experience-item, .education-item, .certificate-item, .skill-item');
+            const originalStyles = [];
+
+            allItems.forEach((item, index) => {
+                originalStyles[index] = item.style.cssText;
+                item.style.pageBreakInside = 'avoid';
+                item.style.breakInside = 'avoid';
+                item.style.display = 'block';
+            });
+
+            // Prevent section titles from being orphaned
+            const sectionTitles = element.querySelectorAll('.resume-section-title');
+            const originalTitleStyles = [];
+
+            sectionTitles.forEach((title, index) => {
+                originalTitleStyles[index] = title.style.cssText;
+                title.style.pageBreakAfter = 'avoid';
+                title.style.breakAfter = 'avoid';
+            });
+
             // Replace SVG icons with simple text elements for PDF
             const contactIcons = element.querySelectorAll('.contact-icon');
             const originalIconHTML = [];
@@ -2042,12 +2087,14 @@
                 jsPDF: {
                     unit: 'mm',
                     format: 'a4',
-                    orientation: 'portrait'
+                    orientation: 'portrait',
+                    compress: true
                 },
                 pagebreak: {
                     mode: ['avoid-all', 'css', 'legacy'],
-                    before: '.resume-section',
-                    avoid: ['.experience-item', '.education-item', '.certificate-item', '.skill-item', '.resume-item']
+                    before: [],  // Don't force breaks before anything
+                    after: [],
+                    avoid: ['.resume-item', '.experience-item', '.education-item', '.certificate-item', '.skill-item', '.resume-item-header', '.resume-item-description', '.item-header', '.item-description']
                 }
             };
 
@@ -2055,6 +2102,16 @@
                 // Restore original sidebar height
                 sidebar.style.height = originalSidebarHeight;
                 sidebar.style.background = originalSidebarBg;
+
+                // Restore original item styles
+                allItems.forEach((item, index) => {
+                    item.style.cssText = originalStyles[index];
+                });
+
+                // Restore original title styles
+                sectionTitles.forEach((title, index) => {
+                    title.style.cssText = originalTitleStyles[index];
+                });
 
                 // Restore original SVG icons
                 contactIcons.forEach((icon, index) => {
