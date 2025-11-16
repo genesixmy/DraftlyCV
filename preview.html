@@ -372,21 +372,28 @@
                 // Design 1 styles (sidebar layout) - use dynamic theme colors
                 styleEl.textContent = `
                     .resume-content { display: flex; min-height: 600px; }
-                    .resume-sidebar { width: 280px; background: linear-gradient(135deg, ${theme.color1} 0%, ${theme.color2} 100%); color: white; padding: 40px 30px; }
-                    .resume-photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 24px; display: block; border: 4px solid white; }
-                    .resume-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
-                    .resume-title { font-size: 1rem; opacity: 0.9; margin-bottom: 32px; text-align: center; }
+                    .resume-sidebar { width: 280px; background: linear-gradient(135deg, ${theme.color1} 0%, ${theme.color2} 100%); color: white; padding: 40px 30px; flex-shrink: 0; }
+                    .resume-contact { margin-bottom: 32px; }
+                    .resume-section { margin-bottom: 32px; }
                     .resume-section-title { font-size: 0.875rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; text-transform: uppercase; }
-                    .resume-contact-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; font-size: 0.875rem; }
+                    .resume-contact-item { margin-bottom: 12px; font-size: 0.875rem; word-break: break-word; }
                     .resume-skill-item { margin-bottom: 16px; }
                     .skill-name { font-size: 0.875rem; margin-bottom: 6px; }
                     .skill-bar-container { height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 4px; overflow: hidden; }
-                    .skill-bar { height: 100%; background: white; border-radius: 4px; }
+                    .skill-bar { height: 100%; background: white; border-radius: 4px; transition: width 0.3s; }
+                    .certificate-item { margin-bottom: 16px; font-size: 0.875rem; }
+                    .cert-name { font-weight: 600; margin-bottom: 4px; }
+                    .cert-issuer { opacity: 0.9; margin-bottom: 2px; }
+                    .cert-year { opacity: 0.8; font-size: 0.8125rem; }
                     .resume-main { flex: 1; padding: 40px; background: white; color: #2d3748; }
-                    .resume-main .resume-section-title { color: ${theme.color1}; border-bottom: 2px solid ${theme.color1}; padding-bottom: 8px; margin-bottom: 24px; }
-                    .experience-item, .education-item, .certificate-item { margin-bottom: 24px; }
-                    .item-header { margin-bottom: 8px; }
-                    .item-title { font-size: 1.125rem; font-weight: 600; color: #2d3748; }
+                    .resume-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 3px solid ${theme.color1}; }
+                    .resume-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid ${theme.color1}; flex-shrink: 0; }
+                    .resume-header h1 { font-size: 2.25rem; font-weight: 700; color: #1a202c; margin: 0; }
+                    .resume-summary { margin-bottom: 32px; }
+                    .resume-summary p { line-height: 1.6; margin: 0; }
+                    .resume-main .resume-section-title { color: ${theme.color1}; border-bottom: 2px solid ${theme.color1}; padding-bottom: 8px; margin-bottom: 20px; }
+                    .experience-item, .education-item { margin-bottom: 24px; }
+                    .item-title { font-size: 1.125rem; font-weight: 600; color: #2d3748; margin-bottom: 4px; }
                     .item-company { font-size: 1rem; color: #4a5568; margin-bottom: 4px; }
                     .item-duration { font-size: 0.875rem; color: #718096; margin-bottom: 8px; }
                     .item-description { font-size: 0.9375rem; color: #4a5568; line-height: 1.6; }
@@ -437,28 +444,47 @@
 
         // Render Design 1 (Sidebar)
         function renderDesign1() {
+            // Helper function to convert line breaks to <br> tags
+            const nl2br = (str) => {
+                if (!str) return '';
+                return str.replace(/\n/g, '<br>');
+            };
+
             return `
                 <div class="resume-content">
                     <div class="resume-sidebar">
-                        ${resumeData.photo ? `<img src="${resumeData.photo}" class="resume-photo" alt="Profile">` : ''}
-                        <div class="resume-name">${resumeData.name || ''}</div>
-                        <div class="resume-title">${resumeData.title || ''}</div>
-
-                        <div class="resume-section-title">Contact</div>
-                        ${resumeData.email ? `<div class="resume-contact-item">${resumeData.email}</div>` : ''}
-                        ${resumeData.phone ? `<div class="resume-contact-item">${resumeData.phone}</div>` : ''}
-                        ${resumeData.address ? `<div class="resume-contact-item">${resumeData.address}</div>` : ''}
-                        ${resumeData.website ? `<div class="resume-contact-item">${resumeData.website}</div>` : ''}
+                        <div class="resume-contact">
+                            <div class="resume-section-title">Contact</div>
+                            ${resumeData.email ? `<div class="resume-contact-item">${resumeData.email}</div>` : ''}
+                            ${resumeData.phone ? `<div class="resume-contact-item">${resumeData.phone}</div>` : ''}
+                            ${resumeData.address ? `<div class="resume-contact-item">${resumeData.address}</div>` : ''}
+                            ${resumeData.website ? `<div class="resume-contact-item">${resumeData.website}</div>` : ''}
+                        </div>
 
                         ${resumeData.skills && resumeData.skills.length > 0 ? `
-                            <div style="margin-top: 32px;">
+                            <div class="resume-section">
                                 <div class="resume-section-title">Skills</div>
-                                ${resumeData.skills.map(skill => `
-                                    <div class="resume-skill-item">
-                                        <div class="skill-name">${skill.name}</div>
-                                        <div class="skill-bar-container">
-                                            <div class="skill-bar" style="width: ${skill.level}%"></div>
+                                <div class="skills-container">
+                                    ${resumeData.skills.map(skill => `
+                                        <div class="resume-skill-item">
+                                            <div class="skill-name">${skill.name}</div>
+                                            <div class="skill-bar-container">
+                                                <div class="skill-bar" style="width: ${skill.level}%"></div>
+                                            </div>
                                         </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${resumeData.certificates && resumeData.certificates.length > 0 ? `
+                            <div class="resume-section">
+                                <div class="resume-section-title">Certificates</div>
+                                ${resumeData.certificates.map(cert => `
+                                    <div class="certificate-item">
+                                        <div class="cert-name">${cert.name}</div>
+                                        <div class="cert-issuer">${cert.issuer}</div>
+                                        ${cert.year ? `<div class="cert-year">${cert.year}</div>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -466,51 +492,46 @@
                     </div>
 
                     <div class="resume-main">
+                        <div class="resume-header">
+                            ${resumeData.photo ? `<img src="${resumeData.photo}" class="resume-photo" alt="Profile">` : ''}
+                            <div class="resume-header-text">
+                                <h1>${resumeData.name || 'Your Name'}</h1>
+                            </div>
+                        </div>
+
                         ${resumeData.summary ? `
-                            <div class="resume-section-title">Professional Summary</div>
-                            <p style="margin-bottom: 32px; line-height: 1.6;">${resumeData.summary}</p>
+                            <div class="resume-summary">
+                                <div class="resume-section-title">Summary</div>
+                                <p>${nl2br(resumeData.summary)}</p>
+                            </div>
                         ` : ''}
 
                         ${resumeData.experience && resumeData.experience.length > 0 ? `
-                            <div class="resume-section-title">Experience</div>
-                            ${resumeData.experience.map(exp => `
-                                <div class="experience-item">
-                                    <div class="item-header">
+                            <div class="resume-section">
+                                <div class="resume-section-title">Experience</div>
+                                ${resumeData.experience.map(exp => `
+                                    <div class="experience-item">
                                         <div class="item-title">${exp.title}</div>
                                         <div class="item-company">${exp.company}</div>
                                         <div class="item-duration">${exp.duration}</div>
+                                        ${exp.description ? `<div class="item-description">${nl2br(exp.description)}</div>` : ''}
                                     </div>
-                                    ${exp.description ? `<div class="item-description">${exp.description}</div>` : ''}
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         ` : ''}
 
                         ${resumeData.education && resumeData.education.length > 0 ? `
-                            <div class="resume-section-title" style="margin-top: 32px;">Education</div>
-                            ${resumeData.education.map(edu => `
-                                <div class="education-item">
-                                    <div class="item-header">
+                            <div class="resume-section">
+                                <div class="resume-section-title">Education</div>
+                                ${resumeData.education.map(edu => `
+                                    <div class="education-item">
                                         <div class="item-title">${edu.degree}</div>
                                         <div class="item-company">${edu.school}</div>
                                         <div class="item-duration">${edu.year}</div>
+                                        ${edu.description ? `<div class="item-description">${nl2br(edu.description)}</div>` : ''}
                                     </div>
-                                    ${edu.description ? `<div class="item-description">${edu.description}</div>` : ''}
-                                </div>
-                            `).join('')}
-                        ` : ''}
-
-                        ${resumeData.certificates && resumeData.certificates.length > 0 ? `
-                            <div class="resume-section-title" style="margin-top: 32px;">Certificates</div>
-                            ${resumeData.certificates.map(cert => `
-                                <div class="certificate-item">
-                                    <div class="item-header">
-                                        <div class="item-title">${cert.name}</div>
-                                        <div class="item-company">${cert.issuer}</div>
-                                        <div class="item-duration">${cert.year}</div>
-                                    </div>
-                                    ${cert.description ? `<div class="item-description">${cert.description}</div>` : ''}
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         ` : ''}
                     </div>
                 </div>
@@ -519,12 +540,17 @@
 
         // Render Design 2 (Timeline)
         function renderDesign2() {
+            // Helper function to convert line breaks to <br> tags
+            const nl2br = (str) => {
+                if (!str) return '';
+                return str.replace(/\n/g, '<br>');
+            };
+
             return `
                 <div class="resume-content">
                     <div class="resume-header-gradient">
                         ${resumeData.photo ? `<img src="${resumeData.photo}" class="resume-photo-center" alt="Profile">` : ''}
-                        <h1>${resumeData.name || ''}</h1>
-                        <div class="resume-subtitle">${resumeData.title || ''}</div>
+                        <h1>${resumeData.name || 'Your Name'}</h1>
                     </div>
 
                     <div class="resume-contact-bar">
@@ -537,8 +563,8 @@
                     <div class="resume-main-content">
                         ${resumeData.summary ? `
                             <div class="resume-section">
-                                <div class="section-title">Professional Summary</div>
-                                <p style="line-height: 1.6; color: #4a5568;">${resumeData.summary}</p>
+                                <div class="section-title">Summary</div>
+                                <p style="line-height: 1.6; color: #4a5568;">${nl2br(resumeData.summary)}</p>
                             </div>
                         ` : ''}
 
@@ -553,7 +579,7 @@
                                             <div class="timeline-company">${exp.company}</div>
                                             <div class="timeline-duration">${exp.duration}</div>
                                         </div>
-                                        ${exp.description ? `<div class="timeline-description">${exp.description}</div>` : ''}
+                                        ${exp.description ? `<div class="timeline-description">${nl2br(exp.description)}</div>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -570,7 +596,7 @@
                                             <div class="timeline-company">${edu.school}</div>
                                             <div class="timeline-duration">${edu.year}</div>
                                         </div>
-                                        ${edu.description ? `<div class="timeline-description">${edu.description}</div>` : ''}
+                                        ${edu.description ? `<div class="timeline-description">${nl2br(edu.description)}</div>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -601,9 +627,9 @@
                                         <div class="timeline-header">
                                             <div class="timeline-title">${cert.name}</div>
                                             <div class="timeline-company">${cert.issuer}</div>
-                                            <div class="timeline-duration">${cert.year}</div>
+                                            ${cert.year ? `<div class="timeline-duration">${cert.year}</div>` : ''}
                                         </div>
-                                        ${cert.description ? `<div class="timeline-description">${cert.description}</div>` : ''}
+                                        ${cert.description ? `<div class="timeline-description">${nl2br(cert.description)}</div>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
