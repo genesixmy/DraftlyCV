@@ -69,12 +69,33 @@ Resume Builder yang berjalan 100% dalam browser tanpa backend atau database.
 }
 ```
 
+## 🔒 Keselamatan (Security)
+
+DraftlyCV dibina dengan ciri-ciri keselamatan production-level untuk deployment ke shared hosting:
+
+✅ **XSS Protection** - Semua input pengguna disanitize untuk prevent script injection
+✅ **CSP Headers** - Content Security Policy untuk block unauthorized resources
+✅ **Input Validation** - Validation untuk email, phone, URL formats
+✅ **Image Size Validation** - Limit saiz gambar ke 100KB
+✅ **API Key Protection** - Warning jika API key tidak configured dengan betul
+
+### ⚠️ PENTING: API Key Security
+
+Jika anda nak guna Share Link feature:
+
+1. **JANGAN** commit API key ke public repository
+2. Replace placeholder `YOUR_JSONBIN_API_KEY_HERE` dengan API key anda sendiri
+3. Untuk production, guna server-side proxy (recommended)
+
+📖 **Baca lengkap:** [SECURITY.md](SECURITY.md)
+
 ## Teknologi
 
 - HTML5
 - CSS3 (Modern Design dengan Gradients & Animations)
 - Vanilla JavaScript (No Framework)
 - html2pdf.js (untuk PDF generation)
+- JSONBin.io API (untuk Share Link feature)
 
 ## Browser Support
 

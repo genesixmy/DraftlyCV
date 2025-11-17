@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' api.jsonbin.io; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>Resume Preview | DraftlyCV</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
@@ -300,6 +301,84 @@
 
         // ===================================
 
+        // ===================================
+        // SECURITY FUNCTIONS
+        // ===================================
+
+        /**
+         * Escape HTML to prevent XSS attacks
+         * CRITICAL: All user input MUST be escaped before rendering
+         */
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            if (typeof unsafe !== 'string') unsafe = String(unsafe);
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\//g, "&#x2F;");
+        }
+
+        /**
+         * Validate email format
+         */
+        function isValidEmail(email) {
+            if (!email) return true; // Optional field
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        /**
+         * Validate phone number (basic check)
+         */
+        function isValidPhone(phone) {
+            if (!phone) return true; // Optional field
+            const phoneRegex = /^[\d\s\-\+\(\)]{7,20}$/;
+            return phoneRegex.test(phone);
+        }
+
+        /**
+         * Validate URL format
+         */
+        function isValidURL(url) {
+            if (!url) return true; // Optional field
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        /**
+         * Sanitize data object - escape all string values
+         */
+        function sanitizeData(data) {
+            if (!data) return data;
+
+            if (typeof data === 'string') {
+                return escapeHtml(data);
+            }
+
+            if (Array.isArray(data)) {
+                return data.map(item => sanitizeData(item));
+            }
+
+            if (typeof data === 'object') {
+                const sanitized = {};
+                for (const key in data) {
+                    sanitized[key] = sanitizeData(data[key]);
+                }
+                return sanitized;
+            }
+
+            return data;
+        }
+
+        // ===================================
+
         let resumeData = null;
         let designType = 'design1'; // default
         let theme = {
@@ -375,8 +454,20 @@
                     return;
                 }
 
-                resumeData = recordData.resumeData;
+                // SECURITY: Sanitize all user data to prevent XSS
+                resumeData = sanitizeData(recordData.resumeData);
                 designType = recordData.designType || 'design1';
+
+                // Validate critical fields
+                if (resumeData.email && !isValidEmail(resumeData.email)) {
+                    console.warn('⚠️ Invalid email format detected');
+                }
+                if (resumeData.phone && !isValidPhone(resumeData.phone)) {
+                    console.warn('⚠️ Invalid phone format detected');
+                }
+                if (resumeData.website && !isValidURL(resumeData.website)) {
+                    console.warn('⚠️ Invalid website URL detected');
+                }
 
                 // Load theme if available
                 if (recordData.theme) {

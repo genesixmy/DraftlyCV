@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' api.jsonbin.io; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>DraftlyCV - Resume Builder</title>
     <style>
         * {
@@ -1307,6 +1308,118 @@
 
         // ===================================
 
+        // ===================================
+        // SECURITY FUNCTIONS
+        // ===================================
+
+        /**
+         * Escape HTML to prevent XSS attacks
+         * CRITICAL: All user input MUST be escaped before rendering
+         */
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            if (typeof unsafe !== 'string') unsafe = String(unsafe);
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\//g, "&#x2F;");
+        }
+
+        /**
+         * Validate and limit image size
+         * Max size: 100KB (to stay within JSONBin.io free tier limits)
+         */
+        function validateImageSize(base64String) {
+            if (!base64String) return { valid: true };
+
+            // Calculate size in bytes
+            const base64Length = base64String.length - (base64String.indexOf(',') + 1);
+            const sizeInBytes = (base64Length * 3) / 4;
+            const sizeInKB = sizeInBytes / 1024;
+
+            const MAX_SIZE_KB = 100;
+
+            if (sizeInKB > MAX_SIZE_KB) {
+                return {
+                    valid: false,
+                    message: `Image too large (${sizeInKB.toFixed(1)}KB). Maximum allowed: ${MAX_SIZE_KB}KB.\n\nPlease use a smaller image or compress it.`
+                };
+            }
+
+            return { valid: true, size: sizeInKB.toFixed(1) };
+        }
+
+        /**
+         * Validate email format
+         */
+        function isValidEmail(email) {
+            if (!email) return true; // Optional field
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        /**
+         * Validate phone number (basic check)
+         */
+        function isValidPhone(phone) {
+            if (!phone) return true; // Optional field
+            const phoneRegex = /^[\d\s\-\+\(\)]{7,20}$/;
+            return phoneRegex.test(phone);
+        }
+
+        /**
+         * Validate URL format
+         */
+        function isValidURL(url) {
+            if (!url) return true; // Optional field
+            try {
+                const urlObj = new URL(url);
+                // Only allow http and https protocols
+                if (!['http:', 'https:'].includes(urlObj.protocol)) {
+                    return false;
+                }
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        /**
+         * Validate resume data before saving
+         */
+        function validateResumeData(data) {
+            const errors = [];
+
+            if (data.email && !isValidEmail(data.email)) {
+                errors.push('Invalid email format');
+            }
+
+            if (data.phone && !isValidPhone(data.phone)) {
+                errors.push('Invalid phone format');
+            }
+
+            if (data.website && !isValidURL(data.website)) {
+                errors.push('Invalid website URL format');
+            }
+
+            if (data.photo) {
+                const imageValidation = validateImageSize(data.photo);
+                if (!imageValidation.valid) {
+                    errors.push(imageValidation.message);
+                }
+            }
+
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
+        }
+
+        // ===================================
+
         // Resume data structure
         let resumeData = {
             photo: '',
@@ -1486,10 +1599,22 @@
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    resumeData.photo = e.target.result;
+                    const base64Image = e.target.result;
+
+                    // SECURITY: Validate image size
+                    const validation = validateImageSize(base64Image);
+                    if (!validation.valid) {
+                        alert('⚠️ ' + validation.message);
+                        event.target.value = ''; // Clear the input
+                        return;
+                    }
+
+                    console.log(`✅ Image validated: ${validation.size}KB`);
+
+                    resumeData.photo = base64Image;
 
                     // Show preview in form
-                    document.getElementById('photoPreviewForm').src = e.target.result;
+                    document.getElementById('photoPreviewForm').src = base64Image;
                     document.getElementById('photoPreviewContainer').style.display = 'block';
 
                     updatePreview();
@@ -2283,6 +2408,13 @@
             // Check if API key is configured
             if (!JSONBIN_API_KEY || JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
                 alert('⚠️ JSONBin.io API key is not configured!\n\nPlease follow these steps:\n1. Go to https://jsonbin.io/ and sign up (free)\n2. Get your X-Master-Key from API Keys section\n3. Add it to the JSONBIN_API_KEY in the code\n\nSee the code comments for detailed instructions.');
+                return;
+            }
+
+            // SECURITY: Validate resume data before sharing
+            const validation = validateResumeData(resumeData);
+            if (!validation.valid) {
+                alert('⚠️ Validation Errors:\n\n' + validation.errors.join('\n'));
                 return;
             }
 
