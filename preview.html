@@ -411,21 +411,34 @@
                 return;
             }
 
+            // Check if API key is configured
+            if (!JSONBIN_API_KEY || JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE') {
+                showError('API Key Not Configured', 'The API key is not configured in preview.html. Please add your JSONBin.io API key (same key used in builder) to view shared resumes.');
+                return;
+            }
+
             try {
+                console.log('🔄 Loading resume from JSONBin.io...');
                 const response = await fetch(\`https://api.jsonbin.io/v3/b/\${binId}/latest\`, {
                     headers: {
                         'X-Master-Key': JSONBIN_API_KEY
                     }
                 });
 
+                console.log('📡 Response status:', response.status);
+
                 if (!response.ok) {
                     if (response.status === 401) {
-                        throw new Error('API key not configured or invalid');
+                        throw new Error('API key is invalid');
                     }
-                    throw new Error('Resume not found');
+                    if (response.status === 404) {
+                        throw new Error('Resume not found');
+                    }
+                    throw new Error(\`HTTP \${response.status}\`);
                 }
 
                 const data = await response.json();
+                console.log('✅ Data received from JSONBin.io');
 
                 // Handle compressed data
                 let recordData;
@@ -433,18 +446,22 @@
                     // New compressed format
                     console.log('🗜️ Decompressing data...');
                     try {
+                        if (typeof LZString === 'undefined') {
+                            throw new Error('LZ-String library not loaded');
+                        }
                         const decompressedJson = LZString.decompressFromBase64(data.record.data);
                         if (!decompressedJson) {
-                            throw new Error('Decompression failed');
+                            throw new Error('Decompression returned null');
                         }
                         recordData = JSON.parse(decompressedJson);
                         console.log('✅ Data decompressed successfully');
                     } catch (error) {
-                        console.error('Error decompressing data:', error);
-                        throw new Error('Failed to decompress resume data');
+                        console.error('❌ Decompression error:', error);
+                        throw new Error('Failed to decompress: ' + error.message);
                     }
                 } else {
                     // Legacy uncompressed format (backwards compatibility)
+                    console.log('📄 Using uncompressed data');
                     recordData = data.record;
                 }
 
@@ -455,8 +472,10 @@
                 }
 
                 // SECURITY: Sanitize all user data to prevent XSS
+                console.log('🔒 Sanitizing data...');
                 resumeData = sanitizeData(recordData.resumeData);
                 designType = recordData.designType || 'design1';
+                console.log('📋 Design type:', designType);
 
                 // Validate critical fields
                 if (resumeData.email && !isValidEmail(resumeData.email)) {
@@ -476,16 +495,19 @@
                 }
 
                 // Load appropriate styles and render
+                console.log('🎨 Loading design styles...');
                 await loadDesignStyles(designType);
+                console.log('🖼️ Rendering resume...');
                 renderResume();
 
                 // Show preview
+                console.log('✅ Showing preview');
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('previewContainer').style.display = 'block';
 
             } catch (error) {
-                console.error('Error loading resume:', error);
-                showError('Failed to Load', 'Unable to load this resume. The link may be invalid or expired.');
+                console.error('❌ Error loading resume:', error);
+                showError('Failed to Load', error.message || 'Unable to load this resume. The link may be invalid or expired.');
             }
         }
 
