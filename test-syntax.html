@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Syntax Test</title>
+</head>
+<body>
+    <h1>Testing JavaScript Syntax</h1>
+    <div id="output"></div>
+
+    <script>
+        // Test template literals
+        const binId = "test123";
+        const url = `https://api.jsonbin.io/v3/b/${binId}/latest`;
+        const status = 404;
+        const errorMsg = `HTTP ${status}`;
+
+        document.getElementById('output').innerHTML = `
+            <p>✅ JavaScript syntax is valid!</p>
+            <p>URL: ${url}</p>
+            <p>Error: ${errorMsg}</p>
+        `;
+
+        console.log('✅ Syntax test passed');
+        console.log('🔄 URL:', url);
+        console.log('📡 Error:', errorMsg);
+    </script>
+</body>
+</html>
