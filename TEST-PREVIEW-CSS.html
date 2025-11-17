@@ -38,16 +38,16 @@
             position: absolute;
             left: 14px;
             top: 8px;
-            bottom: -24px;
+            bottom: -40px;
             width: 3px;
             background: linear-gradient(to bottom, #FF5722, #FF6E40);
         }
         .timeline-item:last-child::before {
-            display: none;
+            bottom: 8px;
         }
         .timeline-dot {
             position: absolute;
-            left: 5px;
+            left: 9px;
             top: 8px;
             width: 14px;
             height: 14px;
@@ -107,10 +107,14 @@
             <div class="css-values">
                 <div><span class="check-mark">✓</span> <strong>.timeline-item::before</strong></div>
                 <div style="margin-left: 30px;">left: <span class="expected">14px</span></div>
+                <div style="margin-left: 30px;">bottom: <span class="expected">-40px</span></div>
                 <div style="margin-left: 30px;">width: <span class="expected">3px</span></div>
                 <br>
+                <div><span class="check-mark">✓</span> <strong>.timeline-item:last-child::before</strong></div>
+                <div style="margin-left: 30px;">bottom: <span class="expected">8px</span> (not display: none)</div>
+                <br>
                 <div><span class="check-mark">✓</span> <strong>.timeline-dot</strong></div>
-                <div style="margin-left: 30px;">left: <span class="expected">5px</span></div>
+                <div style="margin-left: 30px;">left: <span class="expected">9px</span></div>
                 <div style="margin-left: 30px;">top: <span class="expected">8px</span></div>
             </div>
         </div>
@@ -159,12 +163,13 @@
             <h3>🔧 Quick File Check:</h3>
             <p>Open your <code>preview.html</code> file in text editor and search for:</p>
             <div class="css-values">
-                .timeline-dot { position: absolute; left: 5px; top: 8px;<br>
-                .timeline-item::before { ... left: 14px; ...
+                .timeline-dot { position: absolute; left: 9px; top: 8px;<br>
+                .timeline-item::before { ... left: 14px; ... bottom: -40px; ...<br>
+                .timeline-item:last-child::before { bottom: 8px; }
             </div>
             <p style="margin-top: 10px;"><strong>If you see:</strong></p>
             <ul>
-                <li>✅ <code>dot left: 5px</code> AND <code>line left: 14px</code> → File is UPDATED (correct!)</li>
+                <li>✅ <code>dot left: 9px</code> AND <code>line left: 14px, bottom: -40px</code> AND <code>last-child bottom: 8px</code> → File is UPDATED (correct!)</li>
                 <li>❌ Any other values → File is OLD</li>
             </ul>
         </div>
