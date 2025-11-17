@@ -1608,27 +1608,46 @@
         }
 
         // Photo handling functions
-        function handlePhotoUpload(event) {
+        async function handlePhotoUpload(event) {
             const file = event.target.files[0];
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     const base64Image = e.target.result;
 
-                    // SECURITY: Validate image size
+                    // Check image size
                     const validation = validateImageSize(base64Image);
+                    let finalImage = base64Image;
+
                     if (!validation.valid) {
-                        alert('⚠️ ' + validation.message);
-                        event.target.value = ''; // Clear the input
-                        return;
+                        // Auto-compress if too large
+                        console.log(`📦 Image too large (${validation.size}KB), compressing...`);
+                        try {
+                            finalImage = await compressImage(base64Image, 400, 0.7);
+                            const compressedValidation = validateImageSize(finalImage);
+
+                            if (!compressedValidation.valid) {
+                                alert(`⚠️ Image still too large after compression (${compressedValidation.size}KB).\nPlease use a smaller image.`);
+                                event.target.value = '';
+                                return;
+                            }
+
+                            console.log(`✅ Image compressed: ${validation.size}KB → ${compressedValidation.size}KB`);
+                            alert(`✅ Image compressed successfully!\n${validation.size}KB → ${compressedValidation.size}KB`);
+                        } catch (error) {
+                            console.error('Compression failed:', error);
+                            alert('⚠️ Failed to compress image. Please try a smaller image.');
+                            event.target.value = '';
+                            return;
+                        }
+                    } else {
+                        console.log(`✅ Image validated: ${validation.size}KB`);
                     }
 
-                    console.log(`✅ Image validated: ${validation.size}KB`);
-
-                    resumeData.photo = base64Image;
+                    resumeData.photo = finalImage;
 
                     // Show preview in form
-                    document.getElementById('photoPreviewForm').src = base64Image;
+                    document.getElementById('photoPreviewForm').src = finalImage;
                     document.getElementById('photoPreviewContainer').style.display = 'block';
 
                     updatePreview();
