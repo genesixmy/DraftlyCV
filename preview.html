@@ -632,32 +632,32 @@
                 if (line.match(/^[-*]\s+(.+)/)) {
                     if (!inList || listType !== 'ul') {
                         if (inList) {
-                            result.push(\`<\${listType}>\${listItems.join('')}</\${listType}>\`);
+                            result.push(`<${listType}>${listItems.join('')}</${listType}>`);
                             listItems = [];
                         }
                         inList = true;
                         listType = 'ul';
                     }
                     const itemText = line.replace(/^[-*]\s+/, '');
-                    listItems.push(\`<li>\${formatInline(itemText)}</li>\`);
+                    listItems.push(`<li>${formatInline(itemText)}</li>`);
                 }
                 // Check for numbered list (1. item or 1) item)
                 else if (line.match(/^\d+[.)]\s+(.+)/)) {
                     if (!inList || listType !== 'ol') {
                         if (inList) {
-                            result.push(\`<\${listType}>\${listItems.join('')}</\${listType}>\`);
+                            result.push(`<${listType}>${listItems.join('')}</${listType}>`);
                             listItems = [];
                         }
                         inList = true;
                         listType = 'ol';
                     }
                     const itemText = line.replace(/^\d+[.)]\s+/, '');
-                    listItems.push(\`<li>\${formatInline(itemText)}</li>\`);
+                    listItems.push(`<li>${formatInline(itemText)}</li>`);
                 }
                 // Regular line
                 else {
                     if (inList) {
-                        result.push(\`<\${listType}>\${listItems.join('')}</\${listType}>\`);
+                        result.push(`<${listType}>${listItems.join('')}</${listType}>`);
                         listItems = [];
                         inList = false;
                         listType = null;
@@ -672,7 +672,7 @@
 
             // Close any remaining list
             if (inList && listItems.length > 0) {
-                result.push(\`<\${listType}>\${listItems.join('')}</\${listType}>\`);
+                result.push(`<${listType}>${listItems.join('')}</${listType}>`);
             }
 
             return result.join('');
