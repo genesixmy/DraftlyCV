@@ -36,7 +36,7 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: 8px;
+            left: 11px;
             top: 8px;
             bottom: -24px;
             width: 3px;
@@ -47,7 +47,7 @@
         }
         .timeline-dot {
             position: absolute;
-            left: 0px;
+            left: 2px;
             top: 8px;
             width: 14px;
             height: 14px;
@@ -106,11 +106,11 @@
             <h2>Expected CSS Values (Latest Version):</h2>
             <div class="css-values">
                 <div><span class="check-mark">✓</span> <strong>.timeline-item::before</strong></div>
-                <div style="margin-left: 30px;">left: <span class="expected">8px</span></div>
+                <div style="margin-left: 30px;">left: <span class="expected">11px</span></div>
                 <div style="margin-left: 30px;">width: <span class="expected">3px</span></div>
                 <br>
                 <div><span class="check-mark">✓</span> <strong>.timeline-dot</strong></div>
-                <div style="margin-left: 30px;">left: <span class="expected">0px</span></div>
+                <div style="margin-left: 30px;">left: <span class="expected">2px</span></div>
                 <div style="margin-left: 30px;">top: <span class="expected">8px</span></div>
             </div>
         </div>
@@ -159,12 +159,12 @@
             <h3>🔧 Quick File Check:</h3>
             <p>Open your <code>preview.html</code> file in text editor and search for:</p>
             <div class="css-values">
-                .timeline-dot { position: absolute; left: 0px; top: 8px;<br>
-                .timeline-item::before { ... left: 8px; ...
+                .timeline-dot { position: absolute; left: 2px; top: 8px;<br>
+                .timeline-item::before { ... left: 11px; ...
             </div>
             <p style="margin-top: 10px;"><strong>If you see:</strong></p>
             <ul>
-                <li>✅ <code>dot left: 0px</code> AND <code>line left: 8px</code> → File is UPDATED (correct!)</li>
+                <li>✅ <code>dot left: 2px</code> AND <code>line left: 11px</code> → File is UPDATED (correct!)</li>
                 <li>❌ Any other values → File is OLD</li>
             </ul>
         </div>
